@@ -62,3 +62,6 @@ target/
 
 # Vagrant
 .vagrant/
+
+# Mac OS X Beauty .DS_Store
+.DS_Store
