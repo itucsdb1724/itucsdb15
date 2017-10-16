@@ -1,23 +1,19 @@
-import datetime
 import os
 
-from flask import Flask
-from flask import render_template
+from app import app
 
 
-app = Flask(__name__)
+VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
+if VCAP_APP_PORT is not None:
+    port, debug = int(VCAP_APP_PORT), False
+else:
+    port, debug = 5000, True
 
+VCAP_SERVICES = os.getenv('VCAP_SERVICES')
+if VCAP_SERVICES is not None:
+    app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
+else:
+    app.config['dsn'] = """user='vagrant' password='vagrant'
+                           host='localhost' port=5432 dbname='itucsdb'"""
 
-@app.route('/')
-def home_page():
-    now = datetime.datetime.now()
-    return render_template('home.html', current_time=now.ctime())
-
-
-if __name__ == '__main__':
-    VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
-    if VCAP_APP_PORT is not None:
-        port, debug = int(VCAP_APP_PORT), False
-    else:
-        port, debug = 5000, True
-    app.run(host='0.0.0.0', port=port, debug=debug)
+app.run(host='0.0.0.0', port=port, debug=debug)
