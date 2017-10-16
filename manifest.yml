@@ -1,6 +1,6 @@
 applications:
 - sevices:
-  -ElephantSQL-cm
+  - ElephantSQL-cm
   disk_quota: 1024M
   host: itucsdb1724
   name: itucsdb1724
