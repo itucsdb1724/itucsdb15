@@ -4,6 +4,7 @@ import re
 
 from app import app
 
+
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
     parsed = json.loads(vcap_services)
