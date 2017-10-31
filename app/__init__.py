@@ -8,15 +8,36 @@ from flask import Flask
 from flask import redirect
 from flask import render_template
 from flask.helpers import url_for
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager, login_required
 
+
+from app.user.controllers import user as user_module
+from app.user.models import User, UserConnection
 
 app = Flask(__name__)
+app.debug = True
+app.secret_key = 'secret'
+
+Bootstrap(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "user.login"
+
+
+@login_manager.user_loader
+def load_user(session_token):
+    return UserConnection.find_by_session_token(session_token)
 
 
 @app.route('/')
 def home_page():
     now = datetime.datetime.now()
-    return render_template('home.html', current_time=now.ctime())
+    user = User()
+    user.username = "lutfi"
+    user.email = "lutfidemirci@gmail.com"
+    return render_template('home.html', current_time=now.ctime(), user=user)
 
 
 @app.route('/initdb')
@@ -33,11 +54,26 @@ def initialize_database():
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
 
+        query = """DROP TABLE IF EXISTS users"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE  users (
+                  id serial PRIMARY KEY,
+                  email varchar(255) NOT NULL,
+                  username varchar(255) NOT NULL,
+                  password_hash varchar(255) NOT NULL,
+                  session_token varchar(255) NOT NULL,
+                  created_at timestamp,
+                  updated_At timestamp
+                )"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
 
 @app.route('/count')
+@login_required
 def counter_page():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
@@ -56,3 +92,5 @@ def counter_page():
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
+app.register_blueprint(user_module)

@@ -1,2 +1,5 @@
 Flask
 psycopg2
+Flask-WTF
+flask-bootstrap
+flask-login

@@ -1,15 +1,14 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-  </head>
-  <body>
-    <h1>Hello, Flask!</h1>
+{% extends "main.html" %}
+{% block title %}Test{% endblock %}
 
-    <footer>
-      <div id="datetime">{{ current_time }}</div>
-    </footer>
-  </body>
-</html>
+{% block inner_content %}
+  {% if current_user.is_authenticated %}
+    <h1>Hello, {{current_user.username}}</h1>
+    <p>{{ current_time }} - {{ current_user.email }}</p>
+  {% else %}
+    <h1>Hello</h1>
+    <p>{{ current_time }}</p>
+  {% endif %}
+
+{% endblock %}
+
