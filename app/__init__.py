@@ -14,6 +14,9 @@ from flask_login import LoginManager, login_required
 
 from app.user.controllers import user as user_module
 from app.user.models import User, UserConnection
+from app.teacher.models import Teacher, TeacherConnection
+from app.course.models import Course, CourseConnection
+from app.section.models import Section, SectionConnection
 
 app = Flask(__name__)
 app.debug = True
@@ -34,10 +37,25 @@ def load_user(session_token):
 @app.route('/')
 def home_page():
     now = datetime.datetime.now()
-    user = User()
-    user.username = "lutfi"
-    user.email = "lutfidemirci@gmail.com"
-    return render_template('home.html', current_time=now.ctime(), user=user)
+    teacher = TeacherConnection.find_by_id(1)
+    course = CourseConnection.find_by_id(1)
+    if teacher is None:
+        teacher = TeacherConnection.create(Teacher("Sabih"))
+    if course is None:
+        course = CourseConnection.create(Course("BLG313","Giris"))
+    section = Section()
+    section.crn = 31228
+    section.building = "EEB"
+    section.day = "monday"
+    section.time = "morning"
+    section.room = "d212"
+    section.capacity = 21
+    section.enrolled = 12
+    section.course_id =course.id
+    section.teacher_id = teacher.id
+    section = SectionConnection.create(section)
+
+    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section)
 
 
 @app.route('/initdb')
@@ -86,6 +104,25 @@ def initialize_database():
         query = """CREATE TABLE teachers (
                   id serial PRIMARY KEY,
                   name varchar(255) NOT NULL,
+                  created_at timestamp,
+                  updated_At timestamp
+                )"""
+        cursor.execute(query)
+
+        query = """DROP TABLE IF EXISTS sections"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE sections (
+                  id serial PRIMARY KEY,
+                  course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
+                  teacher_id integer REFERENCES teachers  ON DELETE SET NULL ON UPDATE CASCADE,
+                  crn varchar(255) NOT NULL,
+                  building varchar(255) NOT NULL,
+                  day varchar(255) NOT NULL,
+                  time varchar(255) NOT NULL,
+                  room varchar(255) NOT NULL,
+                  capacity varchar(255) NOT NULL,
+                  enrolled varchar(255) NOT NULL,
                   created_at timestamp,
                   updated_At timestamp
                 )"""
