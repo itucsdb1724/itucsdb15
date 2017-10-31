@@ -68,6 +68,18 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
+        query = """DROP TABLE IF EXISTS courses"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE courses (
+                  id serial PRIMARY KEY,
+                  course_code varchar(255) NOT NULL,
+                  title varchar(255) NOT NULL,
+                  created_at timestamp,
+                  updated_At timestamp
+                )"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
