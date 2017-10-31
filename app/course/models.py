@@ -1,3 +1,7 @@
+import datetime
+import psycopg2 as dbapi2
+
+from flask import current_app as app
 
 
 class Course():
@@ -27,6 +31,17 @@ class Course():
 
 
 class CourseConnection:
+
+    @classmethod
+    def find_by_id(self, id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM courses WHERE id = %s LIMIT 1"""
+            cursor.execute(query, [id])
+            data = cursor.fetchone()
+            if data is None:
+                return None
+            return Course.from_database(data)
 
     @classmethod
     def find_by_course_code(self, course_code):
