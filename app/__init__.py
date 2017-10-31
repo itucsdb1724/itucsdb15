@@ -68,7 +68,7 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
-        query = """DROP TABLE IF EXISTS courses"""
+        query = """DROP TABLE IF EXISTS courses CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE courses (
