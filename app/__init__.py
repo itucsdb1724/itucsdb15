@@ -61,7 +61,7 @@ def initialize_database():
                   id serial PRIMARY KEY,
                   email varchar(255) NOT NULL,
                   username varchar(255) NOT NULL,
-                  password_hash varchar(255) NOT NULL,
+                  password varchar(255) NOT NULL,
                   session_token varchar(255) NOT NULL,
                   created_at timestamp,
                   updated_At timestamp
