@@ -99,8 +99,8 @@ def initialize_database():
                   username varchar(255) NOT NULL,
                   password varchar(255) NOT NULL,
                   session_token varchar(255) NOT NULL,
-                  created_at timestamp,
-                  updated_At timestamp
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
                 )"""
         cursor.execute(query)
 
@@ -109,10 +109,10 @@ def initialize_database():
 
         query = """CREATE TABLE courses (
                   id serial PRIMARY KEY,
-                  course_code varchar(255) NOT NULL,
+                  course_code varchar(3) NOT NULL,
                   title varchar(255) NOT NULL,
-                  created_at timestamp,
-                  updated_At timestamp
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
                 )"""
         cursor.execute(query)
 
@@ -122,8 +122,8 @@ def initialize_database():
         query = """CREATE TABLE teachers (
                   id serial PRIMARY KEY,
                   name varchar(255) NOT NULL,
-                  created_at timestamp,
-                  updated_At timestamp
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
                 )"""
         cursor.execute(query)
 
@@ -141,8 +141,8 @@ def initialize_database():
                   room varchar(255) NOT NULL,
                   capacity varchar(255) NOT NULL,
                   enrolled varchar(255) NOT NULL,
-                  created_at timestamp,
-                  updated_At timestamp
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
                 )"""
         cursor.execute(query)
 
@@ -163,8 +163,11 @@ def initialize_database():
                   DD_count integer NOT NULL,
                   FF_count integer NOT NULL,
                   VF_count integer NOT NULL,
-                  created_at timestamp,
-                  updated_At timestamp
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
+                )"""
+        cursor.execute(query)
+
 
         query = """DROP TABLE IF EXISTS messages"""
         cursor.execute(query)
