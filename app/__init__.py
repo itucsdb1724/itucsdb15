@@ -71,7 +71,9 @@ def home_page():
     grade.VF_count = 10
     grade = GradeRepository.create(grade)
 
-    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section, grade=grade)
+    grades = GradeRepository.find_grades_of_teacher(teacher.id + 1)
+
+    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section, grade=grade, grades=grades)
 
 
 @app.route('/initdb')

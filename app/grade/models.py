@@ -48,6 +48,7 @@ class Grade():
     def course(self):
         return CourseRepository.find_by_id(self.course_id)
 
+
     @classmethod
     def from_database(self, row):
         grade = Grade()
@@ -83,6 +84,16 @@ class GradeRepository:
             return Grade.from_database(data)
 
     @classmethod
+    def find_grades_of_teacher(self, teacher_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM grades WHERE teacher_id = %s"""
+            cursor.execute(query, [teacher_id])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Grade.from_database(row)
+            return list(map(parse_database_row, data))
+
+    @classmethod
     def create(self, grade):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -95,3 +106,4 @@ class GradeRepository:
             grade = Grade.from_database(cursor.fetchone())
             # TODO: close cursor or find better solution
             return grade
+
