@@ -5,12 +5,14 @@ from flask import current_app as app
 
 from app.teacher.models import TeacherRepository
 from app.course.models import CourseRepository
+from app.user.models import UserRepository
 
 
 class Grade():
     # id serial PRIMARY KEY
     # course_id integer REFERENCES courses NOT NULL
     # teacher_id integer REFERENCES teachers NOT NULL
+    # user_id integer REFERENCES users NOT NULL
     # filename varchar(255) NOT NULL
     # AA_count integer NOT NULL
     # BA_count integer NOT NULL
@@ -28,6 +30,7 @@ class Grade():
         self.id = None
         self.course_id = None
         self.teacher_id = None
+        self.user_id = None
         self.filename = None
         self.AA_count = None
         self.BA_count = None
@@ -48,6 +51,9 @@ class Grade():
     def course(self):
         return CourseRepository.find_by_id(self.course_id)
 
+    def user(self):
+        return UserRepository.find_by_id(self.user_id)
+
 
     @classmethod
     def from_database(self, row):
@@ -55,18 +61,19 @@ class Grade():
         grade.id = row[0]
         grade.course_id = row[1]
         grade.teacher_id = row[2]
-        grade.filename = row[3]
-        grade.AA_count = row[4]
-        grade.BA_count = row[5]
-        grade.BB_count = row[6]
-        grade.CB_count = row[7]
-        grade.CC_count = row[8]
-        grade.DC_count = row[9]
-        grade.DD_count = row[10]
-        grade.FF_count = row[11]
-        grade.VF_count = row[12]
-        grade.created_at = row[13]
-        grade.updated_at = row[14]
+        grade.user_id = row[3]
+        grade.filename = row[4]
+        grade.AA_count = row[5]
+        grade.BA_count = row[6]
+        grade.BB_count = row[7]
+        grade.CB_count = row[8]
+        grade.CC_count = row[9]
+        grade.DC_count = row[10]
+        grade.DD_count = row[11]
+        grade.FF_count = row[12]
+        grade.VF_count = row[13]
+        grade.created_at = row[14]
+        grade.updated_at = row[15]
         return grade
 
 
@@ -118,10 +125,10 @@ class GradeRepository:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             now = datetime.datetime.now()
-            query = """INSERT INTO grades (course_id, teacher_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                            RETURNING id, course_id, teacher_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at"""
-            cursor.execute(query, (grade.course_id, grade.teacher_id, grade.filename, grade.AA_count, grade.BA_count, grade.BB_count, grade.CB_count, grade.CC_count, grade.DC_count, grade.DD_count, grade.FF_count, grade.VF_count, grade.created_at, grade.updated_at))
+            query = """INSERT INTO grades (course_id, teacher_id, user_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            RETURNING id, course_id, teacher_id, user_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at"""
+            cursor.execute(query, (grade.course_id, grade.teacher_id, grade.user_id, grade.filename, grade.AA_count, grade.BA_count, grade.BB_count, grade.CB_count, grade.CC_count, grade.DC_count, grade.DD_count, grade.FF_count, grade.VF_count, grade.created_at, grade.updated_at))
             connection.commit()
             grade = Grade.from_database(cursor.fetchone())
             # TODO: close cursor or find better solution

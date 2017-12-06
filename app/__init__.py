@@ -153,6 +153,7 @@ def initialize_database():
                   id serial PRIMARY KEY,
                   course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
                   teacher_id integer REFERENCES teachers  ON DELETE SET NULL ON UPDATE CASCADE,
+                  user_id integer REFERENCES users  ON DELETE SET NULL ON UPDATE CASCADE,
                   filename varchar(255) NOT NULL,
                   AA_count integer NOT NULL,
                   BA_count integer NOT NULL,
