@@ -94,6 +94,26 @@ class GradeRepository:
             return list(map(parse_database_row, data))
 
     @classmethod
+    def find_grades_of_course(self, course_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM grades WHERE course_id = %s"""
+            cursor.execute(query, [course_id])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Grade.from_database(row)
+            return list(map(parse_database_row, data))
+
+    @classmethod
+    def find_grades_of_teacher_and_course(self, teacher_id, course_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM grades WHERE teacher_id = %s AND course_id = %s"""
+            cursor.execute(query, [teacher_id, course_id])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Grade.from_database(row)
+            return list(map(parse_database_row, data))
+
+    @classmethod
     def create(self, grade):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
