@@ -14,5 +14,9 @@
   <p>{{ course.course_code }}  {{ course.title }}</p>
   <p>{{ section.id }}  {{ section.crn }}</p>
 
+
+
+  <p>{{ grade.id }} from {{ grade.teacher().name }} : AA : {{ grade.AA_count }}</p>
+
 {% endblock %}
 

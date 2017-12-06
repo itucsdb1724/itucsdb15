@@ -17,6 +17,7 @@ from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
 from app.course.models import Course, CourseRepository
 from app.section.models import Section, SectionRepository
+from app.grade.models import Grade, GradeRepository
 
 app = Flask(__name__)
 app.debug = True
@@ -55,7 +56,22 @@ def home_page():
     section.teacher_id = teacher.id
     section = SectionRepository.create(section)
 
-    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section)
+    grade = Grade()
+    grade.course_id =course.id
+    grade.teacher_id = teacher.id
+    grade.filename = "test.jpg"
+    grade.AA_count = 10
+    grade.BA_count = 10
+    grade.BB_count = 10
+    grade.CB_count = 10
+    grade.CC_count = 10
+    grade.DC_count = 10
+    grade.DD_count = 10
+    grade.FF_count = 10
+    grade.VF_count = 10
+    grade = GradeRepository.create(grade)
+
+    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section, grade=grade)
 
 
 @app.route('/initdb')
@@ -123,6 +139,28 @@ def initialize_database():
                   room varchar(255) NOT NULL,
                   capacity varchar(255) NOT NULL,
                   enrolled varchar(255) NOT NULL,
+                  created_at timestamp,
+                  updated_At timestamp
+                )"""
+        cursor.execute(query)
+
+        query = """DROP TABLE IF EXISTS grades"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE grades (
+                  id serial PRIMARY KEY,
+                  course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
+                  teacher_id integer REFERENCES teachers  ON DELETE SET NULL ON UPDATE CASCADE,
+                  filename varchar(255) NOT NULL,
+                  AA_count integer NOT NULL,
+                  BA_count integer NOT NULL,
+                  BB_count integer NOT NULL,
+                  CB_count integer NOT NULL,
+                  CC_count integer NOT NULL,
+                  DC_count integer NOT NULL,
+                  DD_count integer NOT NULL,
+                  FF_count integer NOT NULL,
+                  VF_count integer NOT NULL,
                   created_at timestamp,
                   updated_At timestamp
                 )"""
