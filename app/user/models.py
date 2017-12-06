@@ -47,7 +47,7 @@ class User(UserMixin):
         return user
 
 
-class UserConnection:
+class UserRepository:
 
     @classmethod
     def find_by_id(self, id):

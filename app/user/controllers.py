@@ -8,7 +8,7 @@ from flask_login import login_required, logout_user
 
 # Import module forms
 from app.user.forms import LoginForm, RegistrationForm
-from app.user.models import User, UserConnection
+from app.user.models import User, UserRepository
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -21,7 +21,7 @@ user = Blueprint('user', __name__, url_prefix='/user')
 def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
-        user = UserConnection.find_by_email(form.email.data)
+        user = UserRepository.find_by_email(form.email.data)
         if user and user.check_password(form.password.data):
             session['user_id'] = user.session_token
             flash('Welcome %s' % user.username)
@@ -36,13 +36,13 @@ def login():
 def register():
     form = RegistrationForm(request.form)
     if form.validate_on_submit():
-        user = UserConnection.find_by_email(form.email.data)
+        user = UserRepository.find_by_email(form.email.data)
         if user:
             flash('Email is already taken.', 'danger')
             return render_template("user/register.html", form=form)
         user = User(form.username.data, form.email.data)
         user.set_password(form.password.data)
-        user = UserConnection.create(user)
+        user = UserRepository.create(user)
         if user:
             session['user_id'] = user.session_token
             flash('Welcome %s' % user.username)

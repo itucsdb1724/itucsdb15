@@ -27,7 +27,7 @@ class Teacher():
         return teacher
 
 
-class TeacherConnection:
+class TeacherRepository:
 
     @classmethod
     def find_by_id(self, id):

@@ -30,7 +30,7 @@ class Course():
         return course
 
 
-class CourseConnection:
+class CourseRepository:
 
     @classmethod
     def find_by_id(self, id):

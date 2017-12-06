@@ -13,10 +13,10 @@ from flask_login import LoginManager, login_required
 
 
 from app.user.controllers import user as user_module
-from app.user.models import User, UserConnection
-from app.teacher.models import Teacher, TeacherConnection
-from app.course.models import Course, CourseConnection
-from app.section.models import Section, SectionConnection
+from app.user.models import User, UserRepository
+from app.teacher.models import Teacher, TeacherRepository
+from app.course.models import Course, CourseRepository
+from app.section.models import Section, SectionRepository
 
 app = Flask(__name__)
 app.debug = True
@@ -31,18 +31,18 @@ login_manager.login_view = "user.login"
 
 @login_manager.user_loader
 def load_user(session_token):
-    return UserConnection.find_by_session_token(session_token)
+    return UserRepository.find_by_session_token(session_token)
 
 
 @app.route('/')
 def home_page():
     now = datetime.datetime.now()
-    teacher = TeacherConnection.find_by_id(1)
-    course = CourseConnection.find_by_id(1)
+    teacher = TeacherRepository.find_by_id(1)
+    course = CourseRepository.find_by_id(1)
     if teacher is None:
-        teacher = TeacherConnection.create(Teacher("Sabih"))
+        teacher = TeacherRepository.create(Teacher("Sabih"))
     if course is None:
-        course = CourseConnection.create(Course("BLG313","Giris"))
+        course = CourseRepository.create(Course("BLG313","Giris"))
     section = Section()
     section.crn = 31228
     section.building = "EEB"
@@ -53,7 +53,7 @@ def home_page():
     section.enrolled = 12
     section.course_id =course.id
     section.teacher_id = teacher.id
-    section = SectionConnection.create(section)
+    section = SectionRepository.create(section)
 
     return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section)
 

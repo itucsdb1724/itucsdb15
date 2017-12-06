@@ -51,7 +51,7 @@ class Section():
         return section
 
 
-class SectionConnection:
+class SectionRepository:
 
     @classmethod
     def find_by_id(self, id):
