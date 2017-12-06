@@ -184,6 +184,23 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
+        query = """DROP TABLE IF EXISTS files"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE files (
+                  id serial PRIMARY KEY,
+                  course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
+                  section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
+                  user_id integer REFERENCES users ON DELETE SET NULL ON UPDATE CASCADE,
+                  section_only boolean NOT NULL SET DEFAULT false,
+                  file_name varchar(255) NOT NULL,
+                  file_size varchar(255) NOT NULL,
+                  file_ext varchar(255) NOT NULL,
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
+                )"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
