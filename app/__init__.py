@@ -163,6 +163,19 @@ def initialize_database():
                   VF_count integer NOT NULL,
                   created_at timestamp,
                   updated_At timestamp
+
+        query = """DROP TABLE IF EXISTS messages"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE messages (
+                  id serial PRIMARY KEY,
+                  thread_id integer REFERENCES messages ON DELETE CASCADE ON UPDATE CASCADE,
+                  course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
+                  section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
+                  section_only boolean NOT NULL SET DEFAULT false,
+                  message varchar(1000) NOT NULL,
+                  created_at timestamp NOT NULL,
+                  updated_At timestamp NOT NULL
                 )"""
         cursor.execute(query)
 
