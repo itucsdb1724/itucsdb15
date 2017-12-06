@@ -90,7 +90,7 @@ def initialize_database():
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
 
-        query = """DROP TABLE IF EXISTS users"""
+        query = """DROP TABLE IF EXISTS users CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE  users (
@@ -107,9 +107,10 @@ def initialize_database():
         query = """DROP TABLE IF EXISTS courses CASCADE"""
         cursor.execute(query)
 
+        # TODO: Seperate course_code to department_code and course_code (BLG and 314)
         query = """CREATE TABLE courses (
                   id serial PRIMARY KEY,
-                  course_code varchar(3) NOT NULL,
+                  course_code varchar(10) NOT NULL,
                   title varchar(255) NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
@@ -127,7 +128,7 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
-        query = """DROP TABLE IF EXISTS sections"""
+        query = """DROP TABLE IF EXISTS sections CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE sections (
@@ -146,7 +147,7 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
-        query = """DROP TABLE IF EXISTS grades"""
+        query = """DROP TABLE IF EXISTS grades CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE grades (
@@ -170,7 +171,7 @@ def initialize_database():
         cursor.execute(query)
 
 
-        query = """DROP TABLE IF EXISTS messages"""
+        query = """DROP TABLE IF EXISTS messages CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE messages (
@@ -178,7 +179,7 @@ def initialize_database():
                   thread_id integer REFERENCES messages ON DELETE CASCADE ON UPDATE CASCADE,
                   course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
                   section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
-                  section_only boolean NOT NULL SET DEFAULT false,
+                  section_only boolean NOT NULL DEFAULT false,
                   message varchar(1000) NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
@@ -193,7 +194,7 @@ def initialize_database():
                   course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
                   section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
                   user_id integer REFERENCES users ON DELETE SET NULL ON UPDATE CASCADE,
-                  section_only boolean NOT NULL SET DEFAULT false,
+                  section_only boolean NOT NULL DEFAULT false,
                   file_name varchar(255) NOT NULL,
                   file_size varchar(255) NOT NULL,
                   file_ext varchar(255) NOT NULL,
