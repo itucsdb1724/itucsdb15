@@ -16,33 +16,26 @@
       
       
       <div class="list-group">
-        <a href="#" class="list-group-item">
-          CRN \ Course Name</a>
-        <a href="#" class="list-group-item">132      Isletim</a>
-        <a href="#" class="list-group-item">132      Isletim</a>
-        <a href="#" class="list-group-item">132      Isletim</a>
-        <a href="#" class="list-group-item">132      Isletim</a>
+        {% for section in sections %}
+          <a href="/section/{{ section.id }}" class="list-group-item">{{ section.course_id }} {{ section.teaher_id }} {{ section.crn }}</a>
+        {% endfor %}
       </div>
     </div>
 
     <div class="col-md-4">
       <h3>Latest Courses</h3>
       <div class="list-group">
-        <a href="#" class="list-group-item">Course Code </a>
-        <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
-        <a href="#" class="list-group-item">Morbi leo risus</a>
-        <a href="#" class="list-group-item">Porta ac consectetur ac</a>
-        <a href="#" class="list-group-item">Vestibulum at eros</a>
+        {% for course in courses %}
+          <a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a>
+        {% endfor %}
       </div>
     </div>
     <div class="col-md-4">
       <h3>Latest Teachers</h3>
       <div class="list-group">
-        <a href="/teacher/1" class="list-group-item">Teacher Name</a>
-        <a href="/teacher/1" class="list-group-item">Dapibus ac facilisis in</a>
-        <a href="/teacher/1" class="list-group-item">Morbi leo risus</a>
-        <a href="/teacher/1" class="list-group-item">Porta ac consectetur ac</a>
-        <a href="/teacher/1" class="list-group-item">Vestibulum at eros</a>
+        {% for teacher in teachers %}
+          <a href="/teacher/{{ teacher.id }}" class="list-group-item">{{ teacher.name }}</a>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -175,21 +168,10 @@
  -->
   {% if current_user.is_authenticated %}
 
-
-
-
-
-
   {% else %}
 
   {% endif %}
 
-  {% for grade in grades %}
-      <div class=flash>{{ grade.id }}</div>
-  {% endfor %}
-
-
-  <p>{{ grade.id }} from {{ grade.teacher().name }} : AA : {{ grade.AA_count }}</p>
 
 {% endblock %}
 

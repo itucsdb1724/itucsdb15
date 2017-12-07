@@ -14,7 +14,8 @@ from flask_login import LoginManager, login_required
 
 from app.user.controllers import user as user_module
 from app.teacher.controllers import teacher as teacher_module
-
+from app.course.controllers import course as course_module
+from app.section.controllers import section as section_module
 
 from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
@@ -40,43 +41,10 @@ def load_user(session_token):
 
 @app.route('/')
 def home_page():
-    now = datetime.datetime.now()
-    teacher = TeacherRepository.find_by_id(1)
-    course = CourseRepository.find_by_id(1)
-    if teacher is None:
-        teacher = TeacherRepository.create(Teacher("Sabih"))
-    if course is None:
-        course = CourseRepository.create(Course("BLG", "313", "Giris"))
-    section = Section()
-    section.crn = 31228
-    section.building = "EEB"
-    section.day = "monday"
-    section.time = "morning"
-    section.room = "d212"
-    section.capacity = 21
-    section.enrolled = 12
-    section.course_id =course.id
-    section.teacher_id = teacher.id
-    section = SectionRepository.create(section)
-
-    grade = Grade()
-    grade.course_id =course.id
-    grade.teacher_id = teacher.id
-    grade.filename = "test.jpg"
-    grade.AA_count = 10
-    grade.BA_count = 10
-    grade.BB_count = 10
-    grade.CB_count = 10
-    grade.CC_count = 10
-    grade.DC_count = 10
-    grade.DD_count = 10
-    grade.FF_count = 10
-    grade.VF_count = 10
-    grade = GradeRepository.create(grade)
-
-    grades = GradeRepository.find_grades_of_teacher(teacher.id + 1)
-
-    return render_template('home.html', current_time=now.ctime(), user=user, teacher=teacher, course=course, section=section, grade=grade, grades=grades)
+    courses = CourseRepository.find_recents(5)
+    sections = SectionRepository.find_recents(5)
+    teachers = TeacherRepository.find_recents(5)
+    return render_template('home.html', sections=sections, courses=courses, teachers=teachers)
 
 
 @app.route('/initdb')
@@ -200,6 +168,83 @@ def initialize_database():
         cursor.execute(query)
 
         connection.commit()
+
+
+    teacher1 = TeacherRepository.create(Teacher("Feanor"))
+    teacher2 = TeacherRepository.create(Teacher("Hayri"))
+    teacher3 = TeacherRepository.create(Teacher("Turgut"))
+    teacher4 = TeacherRepository.create(Teacher("Uyar"))
+    teacher5 = TeacherRepository.create(Teacher("Ahmet"))
+    teacher6 = TeacherRepository.create(Teacher("Sabih"))
+    teacher7 = TeacherRepository.create(Teacher("Atadan"))
+    course1 = CourseRepository.create(Course("BLG", "313", "Giris"))
+    course2 = CourseRepository.create(Course("BLG", "312", "Cikis"))
+    course3 = CourseRepository.create(Course("TAR", "314", "Basl"))
+    course4 = CourseRepository.create(Course("SAN", "315", "Hell"))
+    course5 = CourseRepository.create(Course("ALT", "316", "Silmaril"))
+    course6 = CourseRepository.create(Course("SIL", "317", "Mellon"))
+    course7 = CourseRepository.create(Course("TRF", "318", "Ungolianth"))
+
+    section = Section()
+    section.crn = 31228
+    section.building = "EEB"
+    section.day = "monday"
+    section.time = "morning"
+    section.room = "d212"
+    section.capacity = 21
+    section.enrolled = 12
+
+
+    section.crn = 12373
+    section.course_id =course1.id
+    section.teacher_id = teacher1.id
+    SectionRepository.create(section)
+
+    section.crn = 67537
+    section.course_id =course1.id
+    section.teacher_id = teacher2.id
+    SectionRepository.create(section)
+
+    section.crn = 23675
+    section.course_id =course2.id
+    section.teacher_id = teacher3.id
+    SectionRepository.create(section)
+
+    section.crn = 82847
+    section.course_id =course3.id
+    section.teacher_id = teacher4.id
+    SectionRepository.create(section)
+
+    section.crn = 72639
+    section.course_id =course3.id
+    section.teacher_id = teacher1.id
+    SectionRepository.create(section)
+
+    section.crn = 23379
+    section.course_id =course4.id
+    section.teacher_id = teacher5.id
+    SectionRepository.create(section)
+
+    section.crn = 97357
+    section.course_id =course6.id
+    section.teacher_id = teacher7.id
+    SectionRepository.create(section)
+
+    section.crn = 22134
+    section.course_id =course7.id
+    section.teacher_id = teacher3.id
+    SectionRepository.create(section)
+
+    section.crn = 23380
+    section.course_id =course2.id
+    section.teacher_id = teacher7.id
+    SectionRepository.create(section)
+
+    section.crn = 97761
+    section.course_id =course6.id
+    section.teacher_id = teacher2.id
+    SectionRepository.create(section)
+
     return redirect(url_for('home_page'))
 
 
@@ -210,3 +255,5 @@ def not_found(error):
 
 app.register_blueprint(user_module)
 app.register_blueprint(teacher_module)
+app.register_blueprint(course_module)
+app.register_blueprint(section_module)
