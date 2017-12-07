@@ -43,7 +43,7 @@ def home_page():
     if teacher is None:
         teacher = TeacherRepository.create(Teacher("Sabih"))
     if course is None:
-        course = CourseRepository.create(Course("BLG313","Giris"))
+        course = CourseRepository.create(Course("BLG", "313", "Giris"))
     section = Section()
     section.crn = 31228
     section.building = "EEB"
@@ -107,10 +107,10 @@ def initialize_database():
         query = """DROP TABLE IF EXISTS courses CASCADE"""
         cursor.execute(query)
 
-        # TODO: Seperate course_code to department_code and course_code (BLG and 314)
         query = """CREATE TABLE courses (
                   id serial PRIMARY KEY,
-                  course_code varchar(10) NOT NULL,
+                  department_code varchar(3) NOT NULL,
+                  course_code varchar(5) NOT NULL,
                   title varchar(255) NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
