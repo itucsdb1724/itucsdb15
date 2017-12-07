@@ -171,9 +171,11 @@ def initialize_database():
         query = """CREATE TABLE messages (
                   id serial PRIMARY KEY,
                   thread_id integer REFERENCES messages ON DELETE CASCADE ON UPDATE CASCADE,
+                  user_id integer REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE,
                   course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
                   section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
                   section_only boolean NOT NULL DEFAULT false,
+                  title varchar(255) NOT NULL,
                   message varchar(1000) NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
