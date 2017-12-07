@@ -13,6 +13,9 @@ from flask_login import LoginManager, login_required
 
 
 from app.user.controllers import user as user_module
+from app.teacher.controllers import teacher as teacher_module
+
+
 from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
 from app.course.models import Course, CourseRepository
@@ -204,3 +207,4 @@ def not_found(error):
     return render_template('404.html'), 404
 
 app.register_blueprint(user_module)
+app.register_blueprint(teacher_module)
