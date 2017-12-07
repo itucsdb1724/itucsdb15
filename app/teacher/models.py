@@ -41,6 +41,20 @@ class TeacherRepository:
             return Teacher.from_database(data)
 
     @classmethod
+    def find_recents(self, limit = 0):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if limit > 0:
+                query = """SELECT * FROM teachers ORDER BY updated_at LIMIT %s"""
+                cursor.execute(query, [limit])
+            else:
+                query = """SELECT * FROM teachers ORDER BY updated_at"""
+                cursor.execute(query)
+            data = cursor.fetchall()
+            def parse_database_row(row): return Teacher.from_database(row)
+            return list(map(parse_database_row, data))
+
+    @classmethod
     def create(self, teacher):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
