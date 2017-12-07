@@ -63,7 +63,7 @@ class CourseRepository:
             cursor = connection.cursor()
             now = datetime.datetime.now()
             query = """INSERT INTO courses (department_code, course_code, title, created_at, updated_at)
-                            VALUES (%s %s, %s, %s, %s)
+                            VALUES (%s, %s, %s, %s, %s)
                             RETURNING id, department_code, course_code, title, created_at, updated_at"""
             cursor.execute(query, (course.department_code, course.course_code, course.title, course.created_at, course.updated_at))
             connection.commit()
