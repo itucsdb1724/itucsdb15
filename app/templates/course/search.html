@@ -1,0 +1,55 @@
+{% extends "main.html" %}
+
+{% block title %}Course Search{% endblock %}
+
+{% block inner_content %}
+
+<!-- <div class="row">
+  <div class="col-md-4 col-offset-4">
+    <form action="/course/search">
+     <div class="form-group">
+       <label class="col-form-label" for="formGroupExampleInput">Course:</label>
+       <input type="text" class="form-control" name="query" placeholder="Course Name" value={{query}}>
+     </div>
+    </form>
+  </div>
+</div>  --> 
+
+
+<div class="row">
+      <div class="col-md-4 col-offset-4">
+          <form action="/course/search">
+           <label class="col-form-label" action="/course/search" for="formGroupExampleInput">Course Name:</label>
+          <div class="row">
+            
+           <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" placeholder="Course Name" value={{query}}>
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+          </div><!-- /.row -->
+        </form>
+      </div>
+</div>
+
+
+search query: {{ query }}
+
+{% if courses|length > 0 %}
+<ul>
+  {% for course in courses %}
+    <li><a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a></li>
+  {% endfor %}
+</ul>
+
+{% else %}
+
+<p>No course found</p>
+{% endif %}
+
+
+
+{% endblock %}
