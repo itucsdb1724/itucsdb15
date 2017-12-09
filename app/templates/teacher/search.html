@@ -1,34 +1,75 @@
 {% extends "main.html" %}
 
-{% block title %}Course Search{% endblock %}
+{% block title %}Teacher Search{% endblock %}
 
 {% block inner_content %} 
 
 
+<div class="row">
+	<div class="col-md-3">
+		<form action="/teacher/search"> 
+           <label class="col-form-label" for="formGroupExampleInput">Search Other Teachers:</label> 
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." name="query">
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+              </div><!-- /input-group -->
+       </form>
+	</div>
+	<div class="col-md-9"></div>
+</div>
+<br>
 
 
+<div id="teacher-search-results">
+  <p class="query">search query: <b>{{ query }}</b></p>
+      {% if teachers|length > 0 %}
+        {% for teacher in teachers %}
+          <a href="/teacher/{{ teacher.id }}" class="panel-teacher-link">
+            <div class="panel panel-default panel-teacher">
+              <div class="panel-heading">{{ teacher.name }}</div>
+              <div class="panel-body">
+                <p>hey</p>
+                
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        <div class="clearfix"></div>
+      {% else %}
+      <p>No teacher found</p>
+      {% endif %}
+</div>
 
-<form action="/teacher/search">
- <div class="form-group">
-   <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
-   <input type="text" class="form-control" name="query" placeholder="Teacher Name" value="{{query}}">
- </div>
-</form>
+<style type="text/css">
+  .panel-teacher {
+    color: black;
+    text-align: center;
+  }
 
-search query: {{ query }}
+  .panel-teacher .panel-heading {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px 0;
+  }
 
-{% if teachers|length > 0 %}
-<ul>
-  {% for teacher in teachers %}
-    <li><a href="/teacher/{{ teacher.id }}" class="list-group-item">{{ teacher.name }}</a></li>
-  {% endfor %}
-</ul>
+  .panel-teacher .panel-body {
+    font-size: 16px;
+    height: 85px;
+    padding-top: 20px;
+  }
+ 
+  #teacher-search-results .panel-teacher {
+    width: 260px;
+    float: left;
+    margin: 0 20px 20px 0;
+  }
 
-{% else %}
+  .panel-teacher-link:hover .panel-teacher .panel-heading {
+    background: #b5b5b5;
+  }
 
-<p>No teacher found</p>
-{% endif %}
-
-
+</style>
 
 {% endblock %}
