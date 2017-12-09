@@ -40,6 +40,7 @@ class TeacherRepository:
                 return None
             return Teacher.from_database(data)
 
+
     @classmethod
     def find_recents(self, limit = 0):
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -53,6 +54,18 @@ class TeacherRepository:
             data = cursor.fetchall()
             def parse_database_row(row): return Teacher.from_database(row)
             return list(map(parse_database_row, data))
+
+
+    @classmethod
+    def search(self, q):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM teachers WHERE UPPER(name) ILIKE %s"""
+            cursor.execute(query, ['%'+ q.upper() +'%'])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Teacher.from_database(row)
+            return list(map(parse_database_row, data))
+
 
     @classmethod
     def create(self, teacher):

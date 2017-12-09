@@ -76,8 +76,8 @@ class CourseRepository:
     def search(self, q):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """SELECT * FROM courses WHERE UPPER(title) LIKE (UPPER(%s) || '%')"""
-            cursor.execute(query, [q])
+            query = """SELECT * FROM courses WHERE UPPER(title) ILIKE %s"""
+            cursor.execute(query, ['%'+ q.upper() +'%'])
             data = cursor.fetchall()
             def parse_database_row(row): return Course.from_database(row)
             return list(map(parse_database_row, data))

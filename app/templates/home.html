@@ -12,21 +12,37 @@
 
     <div class="row">
       <div class="col-md-4">
-        <form action="/course/search">
-         <div class="form-group">
-           <label class="col-form-label" for="formGroupExampleInput">Course:</label>
-           <input type="text" class="form-control" name="query" placeholder="Course Name">
-         </div>
-        </form>
+
+         <form action="/course/search"> 
+
+           <label class="col-form-label" for="formGroupExampleInput">Course:</label> 
+                       <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." name="query">
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+              </div><!-- /input-group -->
+       </form>
       </div>
+
       <div class="col-md-2"></div>
       <div class="col-md-4">
-        <form>
-               <div class="form-group">
-                 <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
-                 <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
-               </div>
-              </form>
+        
+          <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
+          <div class="row">
+            
+           
+            <form action="/teacher/search"> 
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." name="query">
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+              </div><!-- /input-group -->
+            </form>
+            
+          </div><!-- /.row -->
+        
       </div>
       <div class="col-md-2"></div>
     </div>  
