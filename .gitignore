@@ -65,3 +65,7 @@ target/
 
 # Mac OS X Beauty .DS_Store
 .DS_Store
+
+# File uploads
+!app/static/uploads/files/.gitkeep
+app/static/uploads/files/

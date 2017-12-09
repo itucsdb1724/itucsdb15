@@ -16,6 +16,7 @@ from app.user.controllers import user as user_module
 from app.teacher.controllers import teacher as teacher_module
 from app.course.controllers import course as course_module
 from app.section.controllers import section as section_module
+from app.file.controllers import file as file_module
 
 from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
@@ -26,6 +27,10 @@ from app.grade.models import Grade, GradeRepository
 app = Flask(__name__)
 app.debug = True
 app.secret_key = 'secret'
+
+
+app.config['APP_ROOT'] = os.path.dirname(os.path.abspath(__file__))
+app.config['UPLOAD_DIR'] = os.path.join(app.config['APP_ROOT'], 'static', 'uploads')
 
 Bootstrap(app)
 
@@ -159,9 +164,10 @@ def initialize_database():
                   section_id integer REFERENCES sections ON DELETE SET NULL ON UPDATE CASCADE,
                   user_id integer REFERENCES users ON DELETE SET NULL ON UPDATE CASCADE,
                   section_only boolean NOT NULL DEFAULT false,
-                  file_name varchar(255) NOT NULL,
-                  file_size varchar(255) NOT NULL,
-                  file_ext varchar(255) NOT NULL,
+                  title varchar(255) NOT NULL,
+                  filename varchar(255) NOT NULL,
+                  original_filename varchar(255) NOT NULL,
+                  content_type varchar(255) NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
                 )"""
@@ -257,3 +263,4 @@ app.register_blueprint(user_module)
 app.register_blueprint(teacher_module)
 app.register_blueprint(course_module)
 app.register_blueprint(section_module)
+app.register_blueprint(file_module)

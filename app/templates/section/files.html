@@ -1,0 +1,53 @@
+{% extends "section/template.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block section_content %}
+
+  <h2>Files</h2>
+
+  {% if files|length > 0 %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>File Name</th>
+          <th>Content Type</th>
+          <th>From</th>
+          <th>Section Only</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+            <tr>
+              <td>{{file.title}}</td>
+              <td>{{file.original_filename}}</td>
+              <td>{{file.content_type}}</td>
+              <td>{{file.user.username}}</td>
+              <td>
+                {{file.section_only}}
+                {% if current_user.is_authenticated and file.user_id == current_user.id %}
+                  <a href="/files/{{file.id}}/trigger_section_only?from=section" class="btn btn-xs">Change</a>
+                {% endif %}
+              </td>
+              <td>
+                <a href="/static/uploads/files/{{file.filename}}" class="btn btn-xs" target="_blank"><span class="glyphicon glyphicon-download"></span></a>
+                {% if current_user.is_authenticated and file.user_id == current_user.id %}
+                  <a href="/files/{{file.id}}/delete?from=section" class="btn btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                {% endif %}
+              </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+      <p>No such file or directory. ERRNO: -ENOENT</p>
+  {% endif %}
+
+  {% if current_user.is_authenticated %}
+  <div class="new-file">
+    <h3>Add New File</h3>
+    {{ wtf.quick_form(form) }}
+  </div>
+  {% endif %}
+{% endblock %}
