@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+
+{% block title %}Section {{ section.crn }}{% endblock %}
+
+{% block inner_content %}
+
+  <style type="text/css">
+    .section-menu .btn {
+      margin-bottom: 20px;
+    }
+    .info{
+      font-size: 20px;
+    }
+  </style>
+
+  <div class="row">
+    <div class="col-md-3 section-menu">
+      <p class="bg-primary info">section Name </p>
+      <p class="bg-primary info">Teacher Name </p>
+      <a href="/section/{{ section.id }}/files" class="btn btn-primary btn-block">Files</a>
+      <a href="/section/{{ section.id }}/messages" class="btn btn-primary btn-block">Messages</a>
+    </div>
+    <div class="col-md-9">
+      {% block section_content %}{% endblock %}
+    </div>
+  </div>
+
+{% endblock %}
