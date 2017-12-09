@@ -4,51 +4,74 @@
 
 {% block inner_content %}
 
-<!-- <div class="row">
-  <div class="col-md-4 col-offset-4">
-    <form action="/course/search">
-     <div class="form-group">
-       <label class="col-form-label" for="formGroupExampleInput">Course:</label>
-       <input type="text" class="form-control" name="query" placeholder="Course Name" value={{query}}>
-     </div>
-    </form>
-  </div>
-</div>  --> 
-
 
 <div class="row">
-      <div class="col-md-4 col-offset-4">
-          <form action="/course/search">
-           <label class="col-form-label" action="/course/search" for="formGroupExampleInput">Course Name:</label>
-          <div class="row">
-            
-           <div class="col-md-8">
-            <div class="input-group">
-                <input type="text" class="form-control" name="query" placeholder="Course Name" value={{query}}>
-                <span class="input-group-btn">
-                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
-                </span>
-              </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-          </div><!-- /.row -->
-        </form>
-      </div>
+  <div class="col-md-3">
+    <form action="/course/search"> 
+       <label class="col-form-label" for="formGroupExampleInput">Search Other Courses:</label> 
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." name="query">
+            <span class="input-group-btn">
+            <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+          </div><!-- /input-group -->
+    </form>
+  </div>
+  <div class="col-md-9"></div>
+</div>
+<br>
+
+
+<div id="course-search-results">
+  <p class="query">search query: <b>{{ query }}</b></p>
+      {% if courses|length > 0 %}
+        {% for course in courses %}
+          <a href="/course/{{ course.id }}" class="panel-course-link">
+            <div class="panel panel-default panel-course">
+              <div class="panel-heading">{{ course.department_code }}{{ course.course_code }}</div>
+              <div class="panel-body">
+                {{ course.title }}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        <div class="clearfix"></div>
+      {% else %}
+      <p>No course found</p>
+      {% endif %}
 </div>
 
+<style type="text/css">
+  .panel-course {
+    color: black;
+    text-align: center;
+  }
 
-search query: {{ query }}
+  .panel-course .panel-heading {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px 0;
+  }
 
-{% if courses|length > 0 %}
-<ul>
-  {% for course in courses %}
-    <li><a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a></li>
-  {% endfor %}
-</ul>
+  .panel-course .panel-body {
+    font-size: 16px;
+    height: 85px;
+    padding-top: 20px;
+  }
+ 
+  #course-search-results .panel-course {
+    width: 260px;
+    float: left;
+    margin: 0 20px 20px 0;
+  }
 
-{% else %}
+  .panel-course-link:hover .panel-course .panel-heading {
+    background: #b5b5b5;
+  }
 
-<p>No course found</p>
-{% endif %}
+</style>
+
+
 
 
 
