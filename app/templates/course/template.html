@@ -1,0 +1,90 @@
+{% extends "main.html" %}
+
+{% block title %}Course {{ course.title }}{% endblock %}
+
+{% block inner_content %}
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="row"><h4>Course Code:</h4>
+        <div class="col-md-3">
+          <div class="form-group">
+           <label for="exampleFormControlSelect1">Course:</label>
+           <select class="form-control form-control-sm" id="exampleFormControlSelect1">
+             <option>BLG</option>
+             <option>AKM</option>
+             <option>TRF</option>
+             <option>TNT</option>
+           </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <form>
+           <div class="form-group">
+             <label class="col-form-label" for="formGroupExampleInput">Code:</label>
+             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="361E">
+           </div>
+          </form>
+        </div>
+        <div class="col-md-6"></div>
+      </div>
+      <div class="row">
+        
+
+        <div class="col-md-6">
+          <form>
+           <div class="form-group">
+             <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
+             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
+           </div>
+          </form>
+        </div>
+        <div class="col-md-6"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <form>
+           <div class="form-group">
+             <label class="col-form-label" for="formGroupExampleInput">Files:</label>
+             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
+           </div>
+          </form>
+        </div>
+        <div class="col-md-6"></div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <h2 class="text-center">Course Information</h2>
+    </div>
+  </div>
+
+
+
+
+  <style type="text/css">
+    .course-menu .btn {
+      margin-bottom: 20px;
+    }
+    .info{
+      font-size: 20px;
+    }
+  </style>
+
+  <div class="row">
+    <div class="col-md-3 course-menu">
+      <p class="bg-primary info">Course Name </p>
+      <p class="bg-primary info">Teacher Name </p>
+      <button type="button" class="btn btn-primary btn-block">Files</button> 
+      <button type="button" class="btn btn-primary btn-block">Messages</button>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-7">
+         {% block course_content %}{% endblock %}
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
