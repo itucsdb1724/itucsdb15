@@ -88,16 +88,17 @@ class FileRepository:
     @classmethod
     def find_files_of_section(self, section_id):
         with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """SELECT f.id, f.course_id, f.section_id, f.user_id, f.section_only, f.title, f.filename, f.original_filename, f.content_type, f.created_at, f.updated_at,
-                              u.id, u.username, u.email, u.password, u.session_token, u.created_at, u.updated_at FROM files as f INNER  JOIN users u ON f.user_id = u.id WHERE f.section_id = %s ORDER BY f.created_at"""
-            cursor.execute(query, [section_id])
-            data = cursor.fetchall()
-            def parse_database_row(row):
-                file = File.from_database(row[0:11])
-                file.user = User.from_database(row[11:18])
-                return file
-            return list(map(parse_database_row, data))
+            with connection.cursor() as cursor:
+                query = """SELECT f.id, f.course_id, f.section_id, f.user_id, f.section_only, f.title, f.filename, f.original_filename, f.content_type, f.created_at, f.updated_at,
+                                  u.id, u.email, u.username, u.password, u.session_token, u.created_at, u.updated_at FROM files AS f INNER JOIN users AS u ON f.user_id = u.id WHERE f.section_id = %s ORDER BY f.created_at"""
+                cursor.execute(query, [section_id])
+                data = cursor.fetchall()
+                def parse_database_row(row):
+                    file = File.from_database(row[0:11])
+                    file.user = User.from_database(row[11:18])
+                    return file
+                return list(map(parse_database_row, data))
+
 
     @classmethod
     def find_files_of_class(self, class_id):

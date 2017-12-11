@@ -1,0 +1,30 @@
+{% extends "section/template.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block section_content %}
+  <h2>{{ thread.title }} ({{ thread.message_count() }} messages)</h2> <br>
+  {% if messages|length > 0 %}
+    <div>
+      {% for message in messages %}
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">{{message.user.username}} <small>at {{message.created_at}}</small>: </h4>
+            <p>{{message.message}}</p>
+          </div>
+          <div class="media-right">
+            {% if current_user.is_authenticated and thread.user_id == current_user.id %}
+              <a href="/messages/{{message.id}}/delete?from=thread" class="btn btn-xs">x</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No message of the desired type. ERRNO: -ENOMSG</p>
+  {% endif %}
+  {% if current_user.is_authenticated %}
+    <div class="new-message">
+      <h3>Add New Message</h3>
+      {{ wtf.quick_form(form) }}
+    </div>
+  {% endif %}
+{% endblock %}

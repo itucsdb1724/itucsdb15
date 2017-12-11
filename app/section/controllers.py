@@ -9,8 +9,11 @@ from flask import current_app as app
 
 from app.section.models import SectionRepository
 from app.file.models import File, FileRepository
+from app.message.models import Message, MessageRepository
 
 from app.file.forms import NewFileForSectionForm
+from app.message.forms import NewThreadForSectionForm
+from app.message.forms import NewMessageForm
 
 section = Blueprint('section', __name__, url_prefix='/section')
 
@@ -43,3 +46,19 @@ def files(id):
     return render_template("section/files.html", section=section, files=files, form=form, current_user=current_user)
 
 
+@section.route('/<int:id>/messages', methods=['GET', 'POST'])
+def threads(id):
+    section = SectionRepository.find_by_id(id)
+    threads = MessageRepository.find_threads_of_section(section.id)
+    form = NewThreadForSectionForm()
+    if form.validate_on_submit():
+        message = Message()
+        message.course_id = section.course_id
+        message.section_id = section.id
+        message.user_id = current_user.id
+        message.section_only = form.section_only.data
+        message.title = form.title.data
+        message.message = form.message.data
+        message = MessageRepository.create(message)
+        return redirect(url_for('section.threads', id=id))
+    return render_template("section/threads.html", section=section, threads=threads, form=form, current_user=current_user)
