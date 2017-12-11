@@ -10,9 +10,6 @@ course_codes = tree.xpath('//select[@name="bolum"]/option[not(@selected)]/text()
 print 'Course Codes: '
 for course_code in course_codes:
     print course_code
-
-    # course_code = 'EHB'
-    print course_code
     link = 'http://www.sis.itu.edu.tr/tr/ders_programlari/LSprogramlar/prg.php?fb=' + course_code
     page = requests.get(link.strip())
     tree = html.fromstring(page.content)
@@ -24,7 +21,6 @@ for course_code in course_codes:
         tds   = tds[14:]
     courses.append(tds)
 
-    print len(courses[0])
     if len(courses[0]) == 0:
         continue
 
@@ -36,7 +32,7 @@ for course_code in course_codes:
         course_sections[0]['title'] = course[2].text
         course_sections[0]['instructor'] = course[3].text
         course_sections[0]['capacity'] = course[8].text
-        course_sections[0]['entrolled'] = course[9].text
+        course_sections[0]['enrolled'] = course[9].text
 
 
         buildings = course[4].text_content()
@@ -64,7 +60,3 @@ for course_code in course_codes:
 
         for section in course_sections:
             print section
-
-
-
-
