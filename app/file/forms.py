@@ -9,3 +9,9 @@ class NewFileForSectionForm(FlaskForm):
     file = FileField(validators=[FileRequired()])
     section_only = BooleanField('Section only?')
     submit = SubmitField('Submit')
+
+class NewFileForCourseForm(FlaskForm):
+    title = StringField('Title', [validators.Required(message='You must give a title'),
+                                  validators.Length(min=4, max=50)])
+    file = FileField(validators=[FileRequired()])
+    submit = SubmitField('Submit')

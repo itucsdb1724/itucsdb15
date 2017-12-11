@@ -3,7 +3,7 @@ import psycopg2 as dbapi2
 
 from flask import current_app as app
 
-from app.course.models import CourseRepository
+from app.course.models import Course, CourseRepository
 from app.section.models import SectionRepository
 from app.user.models import User, UserRepository
 
@@ -41,9 +41,9 @@ class File():
         self.user = None
 
     def course(self):
-        if self.user is None:
-            self.user = CourseRepository.find_by_id(self.course_id)
-        return self.user
+        if self.course is None:
+            self.course = CourseRepository.find_by_id(self.course_id)
+        return self.course
 
     def section(self):
         if self.section is None:
@@ -101,16 +101,31 @@ class FileRepository:
 
 
     @classmethod
-    def find_files_of_class(self, class_id):
+    def find_files_of_course(self, course_id):
         with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """SELECT * FROM files WHERE class_id = %s AND section_only = false AND file_id = NULL ORDER BY created_at"""
-            cursor.execute(query, [class_id])
-            data = cursor.fetchall()
-            def parse_database_row(row): return File.from_database(row)
-            return list(map(parse_database_row, data))
+            with connection.cursor() as cursor:
+                query = """SELECT f.id, f.course_id, f.section_id, f.user_id, f.section_only, f.title, f.filename, f.original_filename, f.content_type, f.created_at, f.updated_at,
+                                  u.id, u.email, u.username, u.password, u.session_token, u.created_at, u.updated_at FROM files AS f INNER JOIN users AS u ON f.user_id = u.id WHERE f.course_id = %s ORDER BY f.created_at"""
+                cursor.execute(query, [course_id])
+                data = cursor.fetchall()
+                def parse_database_row(row):
+                    file = File.from_database(row[0:11])
+                    file.user = User.from_database(row[11:18])
+                    return file
+                return list(map(parse_database_row, data))
 
-
+    @classmethod
+    def find_files_of_user(self, user_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """SELECT f.id, f.course_id, f.section_id, f.user_id, f.section_only, f.title, f.filename, f.original_filename, f.content_type, f.created_at, f.updated_at,
+                                  c.id, c.department_code, c.course_code, c.title, c.created_at, c.updated_At FROM files AS f INNER JOIN courses AS c ON f.course_id = c.id WHERE f.user_id = %s ORDER BY f.created_at"""
+                cursor.execute(query, [user_id])
+                def parse_database_row(row):
+                    file = File.from_database(row[0:11])
+                    file.course = Course.from_database(row[11:17])
+                    return file
+                return list(map(parse_database_row, cursor.fetchall()))
     @classmethod
     def update_section_only(self, id, section_only):
         with dbapi2.connect(app.config['dsn']) as connection:
