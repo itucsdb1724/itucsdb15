@@ -2,7 +2,7 @@ import datetime
 import psycopg2 as dbapi2
 
 from flask import current_app as app
-
+from app.connection import get_connection
 
 class Teacher():
     # id serial PRIMARY KEY
@@ -31,10 +31,19 @@ class TeacherRepository:
 
     @classmethod
     def find_by_id(self, id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM teachers WHERE id = %s LIMIT 1"""
             cursor.execute(query, [id])
+            data = cursor.fetchone()
+            if data is None:
+                return None
+            return Teacher.from_database(data)
+
+    @classmethod
+    def find_by_name(self, name):
+        with get_connection().cursor() as cursor:
+            query = """SELECT * FROM teachers WHERE name = %s LIMIT 1"""
+            cursor.execute(query, [name])
             data = cursor.fetchone()
             if data is None:
                 return None
@@ -43,8 +52,7 @@ class TeacherRepository:
 
     @classmethod
     def find_recents(self, limit = 0):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             if limit > 0:
                 query = """SELECT * FROM teachers ORDER BY updated_at LIMIT %s"""
                 cursor.execute(query, [limit])
@@ -58,8 +66,7 @@ class TeacherRepository:
 
     @classmethod
     def search(self, q):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM teachers WHERE UPPER(name) ILIKE %s"""
             cursor.execute(query, ['%'+ q.upper() +'%'])
             data = cursor.fetchall()
@@ -69,13 +76,12 @@ class TeacherRepository:
 
     @classmethod
     def create(self, teacher):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             now = datetime.datetime.now()
             query = """INSERT INTO teachers (name, created_at, updated_at)
                             VALUES (%s, %s, %s)
                             RETURNING id, name, created_at, updated_at"""
             cursor.execute(query, (teacher.name, teacher.created_at, teacher.updated_at))
-            connection.commit()
+            get_connection().commit()
             teacher = Teacher.from_database(cursor.fetchone())
             return teacher

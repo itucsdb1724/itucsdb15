@@ -3,6 +3,7 @@ import psycopg2 as dbapi2
 
 from flask import current_app as app
 
+from app.connection import get_connection
 from app.course.models import CourseRepository
 from app.teacher.models import TeacherRepository
 
@@ -39,13 +40,13 @@ class Section():
         self.course = None
         self.teacher = None
 
-    
+
     def get_course(self):
         if self.course is None:
             self.course = CourseRepository.find_by_id(self.course_id)
         return self.course
 
-    
+
     def get_teacher(self):
         if self.teacher is None:
             self.teacher = TeacherRepository.find_by_id(self.teacher_id)
@@ -73,8 +74,7 @@ class SectionRepository:
 
     @classmethod
     def find_by_id(self, id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM sections WHERE id = %s LIMIT 1"""
             cursor.execute(query, [id])
             data = cursor.fetchone()
@@ -85,23 +85,21 @@ class SectionRepository:
 
     @classmethod
     def all(self):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            with connection.cursor() as cursor:
-                query = """SELECT * FROM sections"""
-                cursor.execute(query)
-                def parse_database_row(row): return Section.from_database(row)
-                return list(map(parse_database_row, cursor.fetchall()))
+        with get_connection().cursor() as cursor:
+            query = """SELECT * FROM sections"""
+            cursor.execute(query)
+            def parse_database_row(row): return Section.from_database(row)
+            return list(map(parse_database_row, cursor.fetchall()))
 
 
     @classmethod
     def find_recents(self, limit = 0):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             if limit > 0:
-                query = """SELECT * FROM sections ORDER BY updated_at LIMIT %s"""
+                query = """SELECT * FROM sections ORDER BY updated_at DESC LIMIT %s"""
                 cursor.execute(query, [limit])
             else:
-                query = """SELECT * FROM sections ORDER BY updated_at"""
+                query = """SELECT * FROM sections ORDER BY updated_at DESC"""
                 cursor.execute(query)
             data = cursor.fetchall()
             def parse_database_row(row): return Section.from_database(row)
@@ -110,8 +108,7 @@ class SectionRepository:
 
     @classmethod
     def find_sections_of_teacher(self, teacher_id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM sections WHERE teacher_id = %s ORDER BY created_at"""
             cursor.execute(query, [teacher_id])
             data = cursor.fetchall()
@@ -121,8 +118,7 @@ class SectionRepository:
 
     @classmethod
     def find_sections_of_course(self, course_id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM sections WHERE course_id = %s ORDER BY created_at"""
             cursor.execute(query, [course_id])
             data = cursor.fetchall()
@@ -132,13 +128,12 @@ class SectionRepository:
 
     @classmethod
     def create(self, section):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             now = datetime.datetime.now()
             query = """INSERT INTO sections (course_id, teacher_id, crn, building, day, time, room, capacity, enrolled, created_at, updated_at)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                             RETURNING id, course_id, teacher_id, crn, building, day, time, room, capacity, enrolled, created_at, updated_at"""
             cursor.execute(query, (section.course_id, section.teacher_id, section.crn, section.building, section.day, section.time, section.room, section.capacity, section.enrolled, section.created_at, section.updated_at))
-            connection.commit()
+            get_connection().commit()
             section = Section.from_database(cursor.fetchone())
             return section

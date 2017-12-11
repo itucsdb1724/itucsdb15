@@ -3,6 +3,7 @@ import psycopg2 as dbapi2
 
 from flask import current_app as app
 
+from app.connection import get_connection
 from app.teacher.models import TeacherRepository
 from app.course.models import CourseRepository
 from app.user.models import UserRepository
@@ -81,8 +82,7 @@ class GradeRepository:
 
     @classmethod
     def find_by_id(self, id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM grades WHERE id = %s LIMIT 1"""
             cursor.execute(query, [id])
             data = cursor.fetchone()
@@ -92,8 +92,7 @@ class GradeRepository:
 
     @classmethod
     def find_grades_of_teacher(self, teacher_id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM grades WHERE teacher_id = %s"""
             cursor.execute(query, [teacher_id])
             data = cursor.fetchall()
@@ -102,8 +101,7 @@ class GradeRepository:
 
     @classmethod
     def find_grades_of_course(self, course_id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM grades WHERE course_id = %s"""
             cursor.execute(query, [course_id])
             data = cursor.fetchall()
@@ -112,8 +110,7 @@ class GradeRepository:
 
     @classmethod
     def find_grades_of_teacher_and_course(self, teacher_id, course_id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM grades WHERE teacher_id = %s AND course_id = %s"""
             cursor.execute(query, [teacher_id, course_id])
             data = cursor.fetchall()
@@ -122,14 +119,13 @@ class GradeRepository:
 
     @classmethod
     def create(self, grade):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             now = datetime.datetime.now()
             query = """INSERT INTO grades (course_id, teacher_id, user_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                             RETURNING id, course_id, teacher_id, user_id, filename, AA_count, BA_count, BB_count, CB_count, CC_count, DC_count, DD_count, FF_count, VF_count, created_at, updated_at"""
             cursor.execute(query, (grade.course_id, grade.teacher_id, grade.user_id, grade.filename, grade.AA_count, grade.BA_count, grade.BB_count, grade.CB_count, grade.CC_count, grade.DC_count, grade.DD_count, grade.FF_count, grade.VF_count, grade.created_at, grade.updated_at))
-            connection.commit()
+            get_connection().commit()
             grade = Grade.from_database(cursor.fetchone())
             # TODO: close cursor or find better solution
             return grade

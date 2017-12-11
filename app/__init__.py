@@ -3,14 +3,15 @@ import json
 import os
 import psycopg2 as dbapi2
 import re
+from lxml import html
+import requests
 
-from flask import Flask
-from flask import redirect
-from flask import render_template
+from flask import Flask, redirect, render_template, g
 from flask.helpers import url_for
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, login_required
 
+from app.connection import get_connection
 
 from app.user.controllers import user as user_module
 from app.teacher.controllers import teacher as teacher_module
@@ -56,9 +57,7 @@ def home_page():
 
 @app.route('/initdb')
 def initialize_database():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-
+    with get_connection().cursor() as cursor:
         query = """DROP TABLE IF EXISTS users CASCADE"""
         cursor.execute(query)
 
@@ -175,83 +174,8 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
-        connection.commit()
-
-
-    teacher1 = TeacherRepository.create(Teacher("Feanor"))
-    teacher2 = TeacherRepository.create(Teacher("Hayri"))
-    teacher3 = TeacherRepository.create(Teacher("Turgut"))
-    teacher4 = TeacherRepository.create(Teacher("Uyar"))
-    teacher5 = TeacherRepository.create(Teacher("Ahmet"))
-    teacher6 = TeacherRepository.create(Teacher("Sabih"))
-    teacher7 = TeacherRepository.create(Teacher("Atadan"))
-    course1 = CourseRepository.create(Course("BLG", "313", "Giris"))
-    course2 = CourseRepository.create(Course("BLG", "312", "Cikis"))
-    course3 = CourseRepository.create(Course("TAR", "314", "Basl"))
-    course4 = CourseRepository.create(Course("SAN", "315", "Hell"))
-    course5 = CourseRepository.create(Course("ALT", "316", "Silmaril"))
-    course6 = CourseRepository.create(Course("SIL", "317", "Mellon"))
-    course7 = CourseRepository.create(Course("TRF", "318", "Ungolianth"))
-
-    section = Section()
-    section.crn = 31228
-    section.building = "EEB"
-    section.day = "monday"
-    section.time = "morning"
-    section.room = "d212"
-    section.capacity = 21
-    section.enrolled = 12
-
-
-    section.crn = 12373
-    section.course_id =course1.id
-    section.teacher_id = teacher1.id
-    SectionRepository.create(section)
-
-    section.crn = 67537
-    section.course_id =course1.id
-    section.teacher_id = teacher2.id
-    SectionRepository.create(section)
-
-    section.crn = 23675
-    section.course_id =course2.id
-    section.teacher_id = teacher3.id
-    SectionRepository.create(section)
-
-    section.crn = 82847
-    section.course_id =course3.id
-    section.teacher_id = teacher4.id
-    SectionRepository.create(section)
-
-    section.crn = 72639
-    section.course_id =course3.id
-    section.teacher_id = teacher1.id
-    SectionRepository.create(section)
-
-    section.crn = 23379
-    section.course_id =course4.id
-    section.teacher_id = teacher5.id
-    SectionRepository.create(section)
-
-    section.crn = 97357
-    section.course_id =course6.id
-    section.teacher_id = teacher7.id
-    SectionRepository.create(section)
-
-    section.crn = 22134
-    section.course_id =course7.id
-    section.teacher_id = teacher3.id
-    SectionRepository.create(section)
-
-    section.crn = 23380
-    section.course_id =course2.id
-    section.teacher_id = teacher7.id
-    SectionRepository.create(section)
-
-    section.crn = 97761
-    section.course_id =course6.id
-    section.teacher_id = teacher2.id
-    SectionRepository.create(section)
+        get_connection().commit()
+    return redirect(url_for('home_page'))
 
 @app.route('/parse_itu')
 def parse_itu():
@@ -338,10 +262,14 @@ def parse_itu():
     return redirect(url_for('home_page'))
 
 
-# Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
+@app.teardown_appcontext
+def close_connection(error):
+    if hasattr(g, 'connection'):
+        g.connection.close()
 
 app.register_blueprint(user_module)
 app.register_blueprint(teacher_module)

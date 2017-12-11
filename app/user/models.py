@@ -7,6 +7,8 @@ from flask import current_app as app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.connection import get_connection
+
 
 class User(UserMixin):
     # id serial PRIMARY KEY
@@ -50,8 +52,7 @@ class UserRepository:
 
     @classmethod
     def find_by_id(self, id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM users WHERE id = %s LIMIT 1"""
             cursor.execute(query, [id])
             data = cursor.fetchone()
@@ -60,8 +61,7 @@ class UserRepository:
             return User.from_database(data)
 
     def find_by_email(email):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM users WHERE email = %s LIMIT 1"""
             cursor.execute(query, [email])
             data = cursor.fetchone()
@@ -70,8 +70,7 @@ class UserRepository:
             return User.from_database(data)
 
     def find_by_session_token(session_token):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM users WHERE session_token = %s LIMIT 1"""
             cursor.execute(query, [session_token])
             data = cursor.fetchone()
@@ -81,41 +80,36 @@ class UserRepository:
 
     @classmethod
     def create(self, user):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             now = datetime.datetime.now()
             query = """INSERT INTO users (email, username, password, session_token, created_at, updated_at)
                             VALUES (%s, %s, %s, %s, %s, %s)
                             RETURNING id, email, username, password, session_token, created_at, updated_at"""
             cursor.execute(query, (user.email, user.username, user.password_hash,
                                    user.session_token, user.created_at, user.updated_at))
-            connection.commit()
+            get_connection().commit()
             user = User.from_database(cursor.fetchone())
             return user
 
     @classmethod
     def update(self, old_user, new_user):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            with connection.cursor() as cursor:
-                query = """UPDATE users SET updated_at = %s """
-                query_tuple = (new_user.updated_at,)
-                if old_user.username != new_user.username:
-                    query += """, username = %s """
-                    query_tuple += (new_user.username,)
-                if old_user.email != new_user.email:
-                    query += """, email = %s """
-                    query_tuple += (new_user.email,)
-                if old_user.password_hash != new_user.password_hash:
-                    query += """, password = %s """
-                    query_tuple += (new_user.password_hash,)
-                query += """WHERE id = %s"""
-                query_tuple += (old_user.id,)
+        with get_connection().cursor() as cursor:
+            query = """UPDATE users SET updated_at = %s """
+            query_tuple = (new_user.updated_at,)
+            if old_user.username != new_user.username:
+                query += """, username = %s """
+                query_tuple += (new_user.username,)
+            if old_user.email != new_user.email:
+                query += """, email = %s """
+                query_tuple += (new_user.email,)
+            if old_user.password_hash != new_user.password_hash:
+                query += """, password = %s """
+                query_tuple += (new_user.password_hash,)
+            query += """WHERE id = %s"""
+            query_tuple += (old_user.id,)
+            try:
                 cursor.execute(query, query_tuple)
-                connection.commit()
-                return True
-                # try:
-                #     cursor.execute(query, query_tuple)
-                #     connection.commit()
-                #     return True;
-                # except:
-                #     return False;
+                get_connection().commit()
+                return True;
+            except:
+                return False;
