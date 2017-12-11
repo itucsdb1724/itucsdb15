@@ -13,14 +13,21 @@
     }
   </style>
 
+
+
   <div class="row">
-    <div class="col-md-3 section-menu">
-      <p class="bg-primary info">section Name </p>
-      <p class="bg-primary info">Teacher Name </p>
+    <div class="col-md-3">
+      <h3>{{section.get_course().title}} <small>{{section.get_course().department_code}}{{section.get_course().course_code}}</small> </h3>
+      <h2></h2>
+      <h4>{{section.crn}}</h4>
+      <h4><a href="/teacher/{{ section.get_teacher().id }}">{{section.get_teacher().name}}</a></h4>
+      <br>
+
+      <a href="/section/{{ section.id }}" class="btn btn-primary btn-block">Details</a>
       <a href="/section/{{ section.id }}/files" class="btn btn-primary btn-block">Files</a>
       <a href="/section/{{ section.id }}/messages" class="btn btn-primary btn-block">Messages</a>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
       {% block section_content %}{% endblock %}
     </div>
   </div>
