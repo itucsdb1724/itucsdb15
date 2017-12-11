@@ -23,4 +23,3 @@ def search():
 	query = request.args.get('query')
 	teachers = TeacherRepository.search(query)
 	return render_template("teacher/search.html", query=query, teachers=teachers)
-
