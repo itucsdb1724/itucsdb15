@@ -99,4 +99,5 @@ def find():
 	course = CourseRepository.find_by_department_and_course_code(department_code, course_code)
 	if course is not None:
 		return redirect(url_for('course.index', id=course.id))
-	return render_template("course/no-course.html", department_code=department_code, course_code=course_code)
+	flash('No course found ' + department_code + course_code, 'danger')
+	return redirect(url_for('home_page'))
