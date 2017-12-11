@@ -1,212 +1,205 @@
 {% extends "main.html" %}
 {% block title %}Test{% endblock %}
-
 {% block inner_content %}
-
-
-   <!-- ANASAYFA  -->
-
-    <h1 class="text-center">PALMYRA</h1> 
-    <h2 class="text-center">ITU Course & Teacher Database</h2> 
-    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
-
-    <div class="row">
-      <div class="col-md-4">
-
-         <form action="/course/search"> 
-
-           <label class="col-form-label" for="formGroupExampleInput">Course:</label> 
-                       <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for..." name="query">
-                <span class="input-group-btn">
-                <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
-                </span>
-              </div><!-- /input-group -->
-       </form>
+  <!-- ANASAYFA  -->
+  <h1 class="text-center">PALMYRA</h1>
+  <h2 class="text-center">ITU Course & Teacher Database</h2>
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+  <div class="row">
+    <div class="col-md-4">
+      <form action="/course/search">
+        <label class="col-form-label" for="formGroupExampleInput">Course:</label>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for..." name="query">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+          </span>
+          </div><!-- /input-group -->
+        </form>
       </div>
-
-      <div class="col-md-2"></div>
       <div class="col-md-4">
         
-          <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
-          <div class="row">
-            
-           
-            <form action="/teacher/search"> 
+        
+        <div class="row">
+          
+          
+          <form action="/teacher/search">
+            <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for..." name="query">
-                <span class="input-group-btn">
+              <input type="text" class="form-control" placeholder="Search for..." name="query">
+              <span class="input-group-btn">
                 <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
-                </span>
+              </span>
               </div><!-- /input-group -->
             </form>
             
-          </div><!-- /.row -->
-        
-      </div>
-      <div class="col-md-2"></div>
-    </div>  
+            </div><!-- /.row -->
+            
+          </div>
+          <div class="col-md-4">
+            <form action="/course/find" class='form-inline'>
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Course:</label>
+                <select class="form-control form-control-sm" name='department_code'>
+                  {% for department_code in department_codes %}
+                    <option>{{ department_code[0] }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" name='course_code' placeholder="361E">
+              </div>
 
-    <div class="row">
-    <div class="col-md-4">
-      <h3>Latest Sections</h3>
-      <div class="list-group">
-        {% for section in sections %}
-          <a href="/section/{{ section.id }}" class="list-group-item">{{ section.course_id }} {{ section.teaher_id }} {{ section.crn }}</a>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <h3>Latest Courses</h3>
-      <div class="list-group">
-        {% for course in courses %}
-          <a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a>
-        {% endfor %}
-      </div>
-    </div>
-    <div class="col-md-4">
-      <h3>Latest Teachers</h3>
-      <div class="list-group">
-        {% for teacher in teachers %}
-          <a href="/teacher/{{ teacher.id }}" class="list-group-item">{{ teacher.name }}</a>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- Course Search Part  -->
-  <!-- 
-  <div class="row">
-    <div class="col-md-4">
-      <div class="row"><h4>Course Code:</h4>
-        <div class="col-md-3">
-          <div class="form-group">
-           <label for="exampleFormControlSelect1">Course:</label>
-           <select class="form-control form-control-sm" id="exampleFormControlSelect1">
-             <option>BLG</option>
-             <option>AKM</option>
-             <option>TRF</option>
-             <option>TNT</option>
-           </select>
+              <div class="form-group">
+                <input type="submit" value="Find", class='btn btn-primary'>
+              </div>
+            </form>
           </div>
         </div>
-        <div class="col-md-3">
-          <form>
-           <div class="form-group">
-             <label class="col-form-label" for="formGroupExampleInput">Code:</label>
-             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="361E">
-           </div>
-          </form>
-        </div>
-        <div class="col-md-6"></div>
       </div>
       <div class="row">
-        
-
-        <div class="col-md-6">
-          <form>
-           <div class="form-group">
-             <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
-             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
-           </div>
-          </form>
+        <div class="col-md-4">
+          <h3>Latest Sections</h3>
+          <div class="list-group">
+            {% for section in sections %}
+              <a href="/section/{{ section.id }}" class="list-group-item">{{ section.get_course().department_code }}{{ section.get_course().course_code }} {{ section.get_course().title }}  - {{ section.crn }}</a>
+            {% endfor %}
+          </div>
         </div>
-        <div class="col-md-6"></div>
+        <div class="col-md-4">
+          <h3>Latest Courses</h3>
+          <div class="list-group">
+            {% for course in courses %}
+              <a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h3>Latest Teachers</h3>
+          <div class="list-group">
+            {% for teacher in teachers %}
+              <a href="/teacher/{{ teacher.id }}" class="list-group-item">{{ teacher.name }}</a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
+      <!-- Course Search Part  -->
+      <!--
       <div class="row">
-        <div class="col-md-6">
-          <form>
-           <div class="form-group">
-             <label class="col-form-label" for="formGroupExampleInput">Files:</label>
-             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
-           </div>
-          </form>
+        <div class="col-md-4">
+          <div class="row"><h4>Course Code:</h4>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Course:</label>
+                <select class="form-control form-control-sm" id="exampleFormControlSelect1">
+                  <option>BLG</option>
+                  <option>AKM</option>
+                  <option>TRF</option>
+                  <option>TNT</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <form>
+                <div class="form-group">
+                  <label class="col-form-label" for="formGroupExampleInput">Code:</label>
+                  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="361E">
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6"></div>
+          </div>
+          <div class="row">
+            
+            <div class="col-md-6">
+              <form>
+                <div class="form-group">
+                  <label class="col-form-label" for="formGroupExampleInput">Teacher:</label>
+                  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form>
+                <div class="form-group">
+                  <label class="col-form-label" for="formGroupExampleInput">Files:</label>
+                  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Teacher Name">
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6"></div>
+          </div>
         </div>
-        <div class="col-md-6"></div>
-      </div>
-    </div>
-
-    <div class="col-md-8"></div>
-  </div> -->
-
-  
-  <!-- Section Page  -->
-  <!-- 
-  <style type="text/css">
-    .course-menu .btn {
+        <div class="col-md-8"></div>
+      </div> -->
+      
+      <!-- Section Page  -->
+      <!--
+      <style type="text/css">
+      .course-menu .btn {
       margin-bottom: 20px;
-    }
-    .info{
+      }
+      .info{
       font-size: 20px;
-    }
-  </style>
-
-  <div class="row">
-    <div class="col-md-3 course-menu">
-      <p class="bg-primary info">Course Name </p>
-      <p class="bg-primary info">Teacher Name </p>
-      <button type="button" class="btn btn-primary btn-block">Files</button> 
-      <button type="button" class="btn btn-primary btn-block">Messages</button>
-      <button type="button" class="btn btn-primary btn-block">Events</button>
-    </div>
-    <div class="col-md-9">
-
-    </div>
-  </div> -->
-
-
-
-    <!--  User Profile Page  -->
-    <!-- 
-    <style type="text/css">
+      }
+      </style>
+      <div class="row">
+        <div class="col-md-3 course-menu">
+          <p class="bg-primary info">Course Name </p>
+          <p class="bg-primary info">Teacher Name </p>
+          <button type="button" class="btn btn-primary btn-block">Files</button>
+          <button type="button" class="btn btn-primary btn-block">Messages</button>
+          <button type="button" class="btn btn-primary btn-block">Events</button>
+        </div>
+        <div class="col-md-9">
+        </div>
+      </div> -->
+      <!--  User Profile Page  -->
+      <!--
+      <style type="text/css">
       .user-info{
-        margin-top: 30px; 
+      margin-top: 30px;
       }
       .list-group-item{
-        margin-right: 100px;
+      margin-right: 100px;
       }
-    </style>
-    <div>
-      <h3>Username</h3>
-      <div class="user-info">ITU Number</div>
-      <div class="user-info">Department</div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="user-info"> <h4>Enrolled Courses</h4></div>
-        <ul class="list-group">
-          <li class="list-group-item">Database MS</li>
-          <li class="list-group-item">Linear Algebra</li>
-          <li class="list-group-item">Signals and Systems</li>
-          <li class="list-group-item">Robotics</li>
-        </ul>
+      </style>
+      <div>
+        <h3>Username</h3>
+        <div class="user-info">ITU Number</div>
+        <div class="user-info">Department</div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="user-info"> <h4>Enrolled Courses</h4></div>
+          <ul class="list-group">
+            <li class="list-group-item">Database MS</li>
+            <li class="list-group-item">Linear Algebra</li>
+            <li class="list-group-item">Signals and Systems</li>
+            <li class="list-group-item">Robotics</li>
+          </ul>
         </div>
-      <div class="col-md-4">
-        <div class="user-info"> <h4>Past Courses</h4></div>
-        <ul class="list-group">
-          <li class="list-group-item">Database MS</li>
-          <li class="list-group-item">Linear Algebra</li>
-          <li class="list-group-item">Signals and Systems</li>
-          <li class="list-group-item">Robotics</li>
-        </ul>
+        <div class="col-md-4">
+          <div class="user-info"> <h4>Past Courses</h4></div>
+          <ul class="list-group">
+            <li class="list-group-item">Database MS</li>
+            <li class="list-group-item">Linear Algebra</li>
+            <li class="list-group-item">Signals and Systems</li>
+            <li class="list-group-item">Robotics</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="user-info"> <h4>Messages</h4></div>
+          <button type="button user-info" class="btn btn-primary btn-default active user-info">Read Messages</button>
+          <br>
+          <button type="button user-info" class="btn btn-primary btn-default active user-info">Send a message</button>
+        </div>
       </div>
-      <div class="col-md-4">
-        <div class="user-info"> <h4>Messages</h4></div>
-        <button type="button user-info" class="btn btn-primary btn-default active user-info">Read Messages</button>
-        <br>
-        <button type="button user-info" class="btn btn-primary btn-default active user-info">Send a message</button>
-      </div>
-    </div>  
- -->
-  {% if current_user.is_authenticated %}
-
-  {% else %}
-
-  {% endif %}
-
-
-{% endblock %}
-
+      -->
+      {% if current_user.is_authenticated %}
+      {% else %}
+      {% endif %}
+    {% endblock %}
