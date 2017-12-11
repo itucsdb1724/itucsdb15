@@ -62,3 +62,25 @@ def threads(id):
         message = MessageRepository.create(message)
         return redirect(url_for('section.threads', id=id))
     return render_template("section/threads.html", section=section, threads=threads, form=form, current_user=current_user)
+
+@section.route('/<int:section_id>/messages/<int:id>', methods=['GET', 'POST'])
+def messages(section_id, id):
+    section = SectionRepository.find_by_id(section_id)
+    thread = MessageRepository.find_by_id(id)
+    messages = MessageRepository.find_messages_of_thread(id)
+    form = NewMessageForm()
+    if form.validate_on_submit():
+        message = Message()
+        message.course_id = section.course_id
+        message.section_id = section.id
+        message.user_id = current_user.id
+        message.section_only = thread.section_only
+        message.title = thread.title
+        message.thread_id = thread.id
+        message.message = form.message.data
+        message = MessageRepository.create(message)
+        return redirect(url_for('section.messages', section_id=section_id, id=id))
+    return render_template("section/messages.html", section=section, messages=messages, form=form, current_user=current_user, thread=thread)
+
+
+

@@ -3,9 +3,9 @@ import psycopg2 as dbapi2
 
 from flask import current_app as app
 
-from app.course.models import CourseRepository
+from app.course.models import Course, CourseRepository
 from app.section.models import SectionRepository
-from app.user.models import UserRepository
+from app.user.models import User, UserRepository
 
 
 class Message():
@@ -33,14 +33,34 @@ class Message():
         self.created_at = now.ctime()
         self.updated_at = now.ctime()
 
-    def course(self):
-        return CourseRepository.find_by_id(self.course_id)
+        # relations
+        self.course = None
+        self.section = None
+        self.user = None
+        self.thread = None
 
-    def section(self):
-        return SectionRepository.find_by_id(self.section_id)
+    def get_course(self):
+        if self.course is None:
+            self.course = CourseRepository.find_by_id(self.course_id)
+        return self.course
 
-    def user(self):
-        return UserRepository.find_by_id(self.user_id)
+    def get_section(self):
+        if self.section is None:
+            self.section = SectionRepository.find_by_id(self.section_id)
+        return self.section
+
+    def get_user(self):
+        if self.user is None:
+            self.user = UserRepository.find_by_id(self.user_id)
+        return self.user
+
+    def get_thread(self):
+        if self.thread is None:
+            self.thread = MessageRepository.find_by_id(self.thread_id)
+        return self.thread
+
+    def message_count(self):
+        return MessageRepository.message_count(self.id) + 1
 
     @classmethod
     def from_database(self, row):
@@ -75,34 +95,85 @@ class MessageRepository:
     def find_threads_of_section(self, section_id):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """SELECT * FROM messages WHERE section_id = %s AND thread_id = NULL ORDER BY created_at"""
+            query = """SELECT m.id, m.thread_id, m.user_id, m.course_id, m.section_id, m.section_only, m.title, m.message, m.created_at, m.updated_at,
+                              u.id, u.email, u.username, u.password, u.session_token, u.created_at, u.updated_at FROM messages AS m INNER JOIN users AS u ON m.user_id = u.id WHERE section_id = %s AND thread_id is NULL ORDER BY m.created_at"""
             cursor.execute(query, [section_id])
             data = cursor.fetchall()
-            def parse_database_row(row): return Message.from_database(row)
+            def parse_database_row(row):
+                message = Message.from_database(row[0:10])
+                message.user = User.from_database(row[10:17])
+                return message
             return list(map(parse_database_row, data))
 
     @classmethod
-    def find_threads_of_class(self, class_id):
+    def find_threads_of_course(self, course_id):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """SELECT * FROM messages WHERE class_id = %s AND section_only = false AND thread_id = NULL ORDER BY created_at"""
-            cursor.execute(query, [class_id])
+            query = """SELECT m.id, m.thread_id, m.user_id, m.course_id, m.section_id, m.section_only, m.title, m.message, m.created_at, m.updated_at,
+                              u.id, u.email, u.username, u.password, u.session_token, u.created_at, u.updated_at FROM messages AS m INNER JOIN users AS u ON m.user_id = u.id WHERE m.course_id = %s AND m.section_only = false AND m.thread_id is NULL ORDER BY m.created_at"""
+            cursor.execute(query, [course_id])
             data = cursor.fetchall()
-            def parse_database_row(row): return Message.from_database(row)
+            def parse_database_row(row):
+                message = Message.from_database(row[0:10])
+                message.user = User.from_database(row[10:17])
+                return message
             return list(map(parse_database_row, data))
 
     @classmethod
     def find_messages_of_thread(self, thread_id):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """SELECT * FROM messages WHERE thread_id = %s OR id = %s ORDER BY created_at"""
+            query = """SELECT m.id, m.thread_id, m.user_id, m.course_id, m.section_id, m.section_only, m.title, m.message, m.created_at, m.updated_at,
+                              u.id, u.email, u.username, u.password, u.session_token, u.created_at, u.updated_at FROM messages AS m INNER JOIN users AS u ON m.user_id = u.id WHERE m.thread_id = %s OR m.id = %s ORDER BY m.created_at"""
             cursor.execute(query, [thread_id, thread_id])
             data = cursor.fetchall()
-            def parse_database_row(row): return Message.from_database(row)
+            def parse_database_row(row):
+                message = Message.from_database(row[0:10])
+                message.user = User.from_database(row[10:17])
+                return message
             return list(map(parse_database_row, data))
 
     @classmethod
-    def create(self, section):
+    def find_messages_of_user(self, user_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """SELECT m.id, m.thread_id, m.user_id, m.course_id, m.section_id, m.section_only, m.title, m.message, m.created_at, m.updated_at,
+                                  c.id, c.department_code, c.course_code, c.title, c.created_at, c.updated_At FROM messages AS m INNER JOIN courses AS c ON m.course_id = c.id WHERE m.user_id = %s ORDER BY m.created_at"""
+                cursor.execute(query, [user_id])
+                def parse_database_row(row):
+                    message = Message.from_database(row[0:10])
+                    message.course = Course.from_database(row[10:16])
+                    return message
+                return list(map(parse_database_row, cursor.fetchall()))
+
+    @classmethod
+    def update_section_only(self, id, section_only):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """UPDATE messages SET section_only = %s WHERE id = %s OR thread_id = %s"""
+            cursor.execute(query, [section_only, id, id])
+            cursor.close()
+            return True
+
+    @classmethod
+    def message_count(self, thread_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """SELECT count(*) FROM messages WHERE thread_id = %s"""
+                cursor.execute(query, [thread_id])
+                return cursor.fetchone()[0]
+
+    @classmethod
+    def delete(self, id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """DELETE FROM messages WHERE id = %s"""
+            cursor.execute(query, [id])
+            cursor.close()
+            return True
+
+    @classmethod
+    def create(self, message):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             now = datetime.datetime.now()
@@ -112,5 +183,5 @@ class MessageRepository:
             cursor.execute(query, (message.thread_id, message.user_id, message.course_id, message.section_id,
                                    message.section_only, message.title, message.message, message.created_at, message.updated_at))
             connection.commit()
-            section = parse_database_row(cursor.fetchone())
-            return section
+            message = Message.from_database(cursor.fetchone())
+            return message

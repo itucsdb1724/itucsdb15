@@ -17,6 +17,7 @@ from app.teacher.controllers import teacher as teacher_module
 from app.course.controllers import course as course_module
 from app.section.controllers import section as section_module
 from app.file.controllers import file as file_module
+from app.message.controllers import message as message_module
 
 from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
@@ -264,3 +265,4 @@ app.register_blueprint(teacher_module)
 app.register_blueprint(course_module)
 app.register_blueprint(section_module)
 app.register_blueprint(file_module)
+app.register_blueprint(message_module)

@@ -20,4 +20,34 @@ def index(id):
 def search():
 	query = request.args.get('query')
 	courses = CourseRepository.search(query)
-	return render_template("course/search.html", query=query, courses=courses)
+@course.route('/<int:id>/messages', methods=['GET', 'POST'])
+def threads(id):
+    course = CourseRepository.find_by_id(id)
+    threads = MessageRepository.find_threads_of_course(course.id)
+    form = NewThreadForCourseForm()
+    if form.validate_on_submit():
+        message = Message()
+        message.course_id = course.id
+        message.user_id = current_user.id
+        message.title = form.title.data
+        message.message = form.message.data
+        message = MessageRepository.create(message)
+        return redirect(url_for('course.threads', id=id))
+    return render_template("course/threads.html", course=course, threads=threads, form=form, current_user=current_user)
+
+@course.route('/<int:course_id>/messages/<int:id>', methods=['GET', 'POST'])
+def messages(course_id, id):
+    course = CourseRepository.find_by_id(course_id)
+    thread = MessageRepository.find_by_id(id)
+    messages = MessageRepository.find_messages_of_thread(id)
+    form = NewMessageForm()
+    if form.validate_on_submit():
+        message = Message()
+        message.course_id = course.id
+        message.user_id = current_user.id
+        message.title = thread.title
+        message.thread_id = thread.id
+        message.message = form.message.data
+        message = MessageRepository.create(message)
+        return redirect(url_for('course.messages', course_id=course_id, id=id))
+    return render_template("course/messages.html", course=course, messages=messages, form=form, current_user=current_user, thread=thread)
