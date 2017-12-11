@@ -22,8 +22,7 @@ class User(UserMixin):
         self.username = username
         self.email = email
         self.password_hash = None
-        self.session_token = ''.join(random.choice(
-            string.ascii_uppercase + string.digits) for _ in range(32))
+        self.session_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
         now = datetime.datetime.now()
         self.created_at = now.ctime()
         self.updated_at = now.ctime()
@@ -38,8 +37,8 @@ class User(UserMixin):
     def from_database(self, row):
         user = User()
         user.id = row[0]
-        user.username = row[1]
-        user.email = row[2]
+        user.email = row[1]
+        user.username = row[2]
         user.password_hash = row[3]
         user.session_token = row[4]
         user.created_at = row[5]
@@ -85,11 +84,38 @@ class UserRepository:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             now = datetime.datetime.now()
-            query = """INSERT INTO users (username, email, password, session_token, created_at, updated_at)
+            query = """INSERT INTO users (email, username, password, session_token, created_at, updated_at)
                             VALUES (%s, %s, %s, %s, %s, %s)
-                            RETURNING id, username, email, password, session_token, created_at, updated_at"""
-            cursor.execute(query, (user.username, user.email, user.password_hash,
+                            RETURNING id, email, username, password, session_token, created_at, updated_at"""
+            cursor.execute(query, (user.email, user.username, user.password_hash,
                                    user.session_token, user.created_at, user.updated_at))
             connection.commit()
             user = User.from_database(cursor.fetchone())
             return user
+
+    @classmethod
+    def update(self, old_user, new_user):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """UPDATE users SET updated_at = %s """
+                query_tuple = (new_user.updated_at,)
+                if old_user.username != new_user.username:
+                    query += """, username = %s """
+                    query_tuple += (new_user.username,)
+                if old_user.email != new_user.email:
+                    query += """, email = %s """
+                    query_tuple += (new_user.email,)
+                if old_user.password_hash != new_user.password_hash:
+                    query += """, password = %s """
+                    query_tuple += (new_user.password_hash,)
+                query += """WHERE id = %s"""
+                query_tuple += (old_user.id,)
+                cursor.execute(query, query_tuple)
+                connection.commit()
+                return True
+                # try:
+                #     cursor.execute(query, query_tuple)
+                #     connection.commit()
+                #     return True;
+                # except:
+                #     return False;

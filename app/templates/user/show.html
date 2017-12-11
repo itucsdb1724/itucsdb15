@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}{{title}}{% endblock %}
+
+{% block inner_content %}
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h1 class="">{{user.username}} <small>{{user.email}}</small></h1>
+      <p>member since {{ user.created_at.strftime('%d %B %Y') }}</p>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Latest Messages</h3>
+        {% if messages|length > 0 %}
+          <div class="list-group">
+            {% for message in messages %}
+              <a href="/message/{{ message.id }}" class="list-group-item">{{message.id}}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>No message yet.</p>
+        {% endif %}
+      </div>
+      <div class="col-md-6">
+        <h3>Latest Files</h3>
+        {% if files|length > 0 %}
+          <div class="list-group">
+            {% for file in files %}
+              <a href="/file/{{ file.id }}" class="list-group-item">{{file.id}}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>No file yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

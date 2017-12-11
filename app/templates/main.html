@@ -20,6 +20,8 @@
       <ul class="nav navbar-nav navbar-right">
 
         {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('user.edit') }}">Edit Profile</a></li>
+          <li><a href="{{ url_for('user.show', id=current_user.id) }}">{{current_user.username}}</a></li>
           <li><a href="{{ url_for('user.logout') }}">Logout</a></li>
         {% else %}
           <li><a href="{{ url_for('user.login') }}">Login</a></li>

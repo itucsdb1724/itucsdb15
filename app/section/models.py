@@ -64,6 +64,17 @@ class SectionRepository:
                 return None
             return Section.from_database(data)
 
+
+    @classmethod
+    def all(self):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """SELECT * FROM sections"""
+                cursor.execute(query)
+                def parse_database_row(row): return Section.from_database(row)
+                return list(map(parse_database_row, cursor.fetchall()))
+
+
     @classmethod
     def find_recents(self, limit = 0):
         with dbapi2.connect(app.config['dsn']) as connection:
