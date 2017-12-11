@@ -13,7 +13,7 @@
           </div>
           <div class="media-right">
             {% if current_user.is_authenticated and thread.user_id == current_user.id %}
-              <a href="/messages/{{message.id}}/delete?from=thread" class="btn btn-xs">x</a>
+              <a href="/messages/{{message.id}}/delete?from=course" class="btn btn-xs">x</a>
             {% endif %}
           </div>
         </div>
