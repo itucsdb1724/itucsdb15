@@ -3,6 +3,8 @@ import psycopg2 as dbapi2
 
 from flask import current_app as app
 
+from app.course.models import CourseRepository
+from app.teacher.models import TeacherRepository
 
 class Section():
     # id serial PRIMARY KEY
@@ -32,6 +34,22 @@ class Section():
         now = datetime.datetime.now()
         self.created_at = now.ctime()
         self.updated_at = now.ctime()
+
+        # relations
+        self.course = None
+        self.teacher = None
+
+    
+    def get_course(self):
+        if self.course is None:
+            self.course = CourseRepository.find_by_id(self.course_id)
+        return self.course
+
+    
+    def get_teacher(self):
+        if self.teacher is None:
+            self.teacher = TeacherRepository.find_by_id(self.teacher_id)
+        return self.teacher
 
     @classmethod
     def from_database(self, row):
@@ -77,6 +95,29 @@ class SectionRepository:
             data = cursor.fetchall()
             def parse_database_row(row): return Section.from_database(row)
             return list(map(parse_database_row, data))
+
+
+    @classmethod
+    def find_sections_of_teacher(self, teacher_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM sections WHERE teacher_id = %s ORDER BY created_at"""
+            cursor.execute(query, [teacher_id])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Section.from_database(row)
+            return list(map(parse_database_row, data))
+
+
+    @classmethod
+    def find_sections_of_course(self, course_id):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM sections WHERE course_id = %s ORDER BY created_at"""
+            cursor.execute(query, [course_id])
+            data = cursor.fetchall()
+            def parse_database_row(row): return Section.from_database(row)
+            return list(map(parse_database_row, data))
+
 
     @classmethod
     def create(self, section):
