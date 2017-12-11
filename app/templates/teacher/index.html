@@ -2,6 +2,7 @@
 
 {% block title %}Teacher{% endblock %}
 
+
 {% block inner_content %}
   
 
@@ -19,47 +20,51 @@
     .info2{
       margin-top: 30px;
     }
+    .info3{
+      margin-right: 20px;
+    }
   </style>
 
+
   <div class="row">
-    <div class="col-md-9">
-      
-      <div class="media">
-        <div class="media-body">
-         <h3 class="media-heading">Ahmet Sabih Atadan</h3>
-           
-        </div>
-        <div class="media-center">
-         <a href="#">
-           <img class="img-circle" src="http://muh.klu.edu.tr/yonetim/dosyalar/birimler/muh/resimler/muh_kr_11-08-2014_d0f3b.jpg" alt="sabih" width="210" height="236">
-         </a>
-        </div>
-        
-      </div>
-      <div class="info">
-        <h4>Teacher Information</h4>
-      </div>
-      <div class="info2">
-        <h4>Courses</h4>
-        <h5 class="info2">Current Courses</h5>
-        <h5 class="info2">Past Courses</h5>
-      </div>
-    </div>
-    <div class="col-md-3 teach-menu">
-          <form>
-           <div class="form-group search-teacher">
-             <label class="col-form-label" for="formGroupExampleInput">Teacher Name:</label>
-             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Search">
-           </div>
-          </form>
-          <form>
-           <div class="form-group search-teacher">
-             <label class="col-form-label" for="formGroupExampleInput">Grades:</label>
-             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter Course Name (Ex:BLG361E)">
-           </div>
-          </form>
-    </div>
-  </div>   
+
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <h2 class="text-center"><strong>{{ teacher.name }}</strong> </h2> 
+      <br>
+      <li class="list-group-item"><u><strong>Opened Sections of {{ teacher.name }}:</strong> </u></li>
+      <li class="list-group-item"><em class="info3">Name </em><em class="info3"> CRN  </em> <em class="info3">  Time </em>   </li>
+   
+
+      {% for section in sections %}
+        <a href="/section/{{ section.id }}" class="list-group-item"><strong class="info3">{{ section.get_course().department_code }}{{ section.get_course().course_code }} {{ section.get_course().title }}</strong>  <strong class="info3">{{ section.crn }} </strong>   <strong class="info3">{{ section.day }}  {{ section.time }}</strong> </a>
+      {% endfor %}
+    <div class="col-md-3"></div>
+   <br><br><br><br>
+  </div>  <!-- row -->
+
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <form action="/teacher/search"> 
+       <label class="col-form-label" for="formGroupExampleInput">Search Other Teachers:</label> 
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." name="query">
+            <span class="input-group-btn">
+            <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+          </div><!-- /input-group -->
+    </form>
+  </div>
+  <div class="col-md-4"></div>
+    
+</div>  
+    
+
+
+
+
 
 
 {% endblock %}

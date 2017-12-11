@@ -84,6 +84,15 @@ class CourseRepository:
 
 
     @classmethod
+    def find_department_codes(self):
+        with dbapi2.connect(app.config['dsn']) as connection:
+            with connection.cursor() as cursor:
+                query = """SELECT DISTINCT(department_code) FROM courses"""
+                cursor.execute(query)
+                return cursor.fetchall()
+
+
+    @classmethod
     def create(self, course):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()

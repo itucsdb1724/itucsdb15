@@ -1,0 +1,54 @@
+{% extends "main.html" %}
+
+{% block title %}Course {{ course.title }}{% endblock %}
+
+{% block inner_content %}
+
+<style type="text/css">
+    .section-menu .btn {
+      margin-bottom: 20px;
+    }
+    .info{
+      font-size: 20px;
+    }
+  </style>
+
+
+  <div class="row">
+    <div class="col-md-3">
+        
+        <h3>{{course.title}} <small>{{course.department_code}}{{course.course_code}}</small> </h3>
+        <h2></h2>
+        <h4>{{course.crn}}</h4>
+        <br>
+        <a href="/course/{{ course.id }}" class="btn btn-primary btn-block"> Details </a>
+        <a href="/course/{{ course.id }}/files" class="btn btn-primary btn-block"> Files </a>
+        <a href="/course/{{ course.id }}/messages" class="btn btn-primary btn-block"> Messages </a>
+        </div>
+    
+    <div class="col-md-7">
+      {% block course_content %}{% endblock %}
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+  <form action="/course/find" class='form-inline'>
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Find Other Courses:</label>
+                <select class="form-control form-control-sm" name='department_code'>
+                  {% for department_code in department_codes %}
+                    <option>{{ department_code[0] }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" name='course_code' placeholder="361E">
+              </div>
+
+              <div class="form-group">
+                <input type="submit" value="Find", class='btn btn-primary'>
+              </div>
+      </form>
+
+
+{% endblock %}

@@ -10,6 +10,7 @@ from flask import current_app as app
 from app.course.models import CourseRepository
 from app.file.models import File, FileRepository
 from app.message.models import Message, MessageRepository
+from app.section.models import SectionRepository
 
 from app.file.forms import NewFileForCourseForm
 from app.message.forms import NewThreadForCourseForm
@@ -21,7 +22,10 @@ course = Blueprint('course', __name__, url_prefix='/course')
 @course.route('/<int:id>', methods=['GET'])
 def index(id):
 	course = CourseRepository.find_by_id(id)
-	return render_template("course/index.html", course=course)
+	if not course:
+		abort(404)
+	sections = SectionRepository.find_sections_of_course(id)
+	return render_template("course/index.html", course=course, sections=sections)
 
 
 # /search yapılacak
@@ -85,3 +89,14 @@ def messages(course_id, id):
         message = MessageRepository.create(message)
         return redirect(url_for('course.messages', course_id=course_id, id=id))
     return render_template("course/messages.html", course=course, messages=messages, form=form, current_user=current_user, thread=thread)
+
+
+
+@course.route('/find', methods=['GET'])
+def find():
+	department_code = request.args.get('department_code')
+	course_code = request.args.get('course_code')
+	course = CourseRepository.find_by_department_and_course_code(department_code, course_code)
+	if course is not None:
+		return redirect(url_for('course.index', id=course.id))
+	return render_template("course/no-course.html", department_code=department_code, course_code=course_code)
