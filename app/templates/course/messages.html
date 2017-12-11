@@ -1,6 +1,7 @@
-
 {% import "bootstrap/wtf.html" as wtf %}
+{% extends "course/template.html" %}
 
+{% block course_content %}
   <h2>{{ thread.title }} ({{ thread.message_count() }} messages)</h2> <br>
   {% if messages|length > 0 %}
     <div>
@@ -28,3 +29,4 @@
     </div>
   {% endif %}
 
+{% endblock %}
