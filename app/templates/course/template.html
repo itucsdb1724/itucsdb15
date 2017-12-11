@@ -32,23 +32,7 @@
     <div class="col-md-2"></div>
   </div>
 
-  <form action="/course/find" class='form-inline'>
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">Find Other Courses:</label>
-                <select class="form-control form-control-sm" name='department_code'>
-                  {% for department_code in department_codes %}
-                    <option>{{ department_code[0] }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="form-group">
-                <input type="text" class="form-control" name='course_code' placeholder="361E">
-              </div>
 
-              <div class="form-group">
-                <input type="submit" value="Find", class='btn btn-primary'>
-              </div>
-      </form>
 
 
 {% endblock %}
