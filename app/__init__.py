@@ -24,7 +24,6 @@ from app.user.models import User, UserRepository
 from app.teacher.models import Teacher, TeacherRepository
 from app.course.models import Course, CourseRepository
 from app.section.models import Section, SectionRepository
-from app.grade.models import Grade, GradeRepository
 
 app = Flask(__name__)
 app.debug = True
@@ -110,29 +109,6 @@ def initialize_database():
                   room varchar(255) NOT NULL,
                   capacity varchar(255) NOT NULL,
                   enrolled varchar(255) NOT NULL,
-                  created_at timestamp NOT NULL,
-                  updated_At timestamp NOT NULL
-                )"""
-        cursor.execute(query)
-
-        query = """DROP TABLE IF EXISTS grades CASCADE"""
-        cursor.execute(query)
-
-        query = """CREATE TABLE grades (
-                  id serial PRIMARY KEY,
-                  course_id integer REFERENCES courses ON DELETE SET NULL ON UPDATE CASCADE,
-                  teacher_id integer REFERENCES teachers  ON DELETE SET NULL ON UPDATE CASCADE,
-                  user_id integer REFERENCES users  ON DELETE SET NULL ON UPDATE CASCADE,
-                  filename varchar(255) NOT NULL,
-                  AA_count integer NOT NULL,
-                  BA_count integer NOT NULL,
-                  BB_count integer NOT NULL,
-                  CB_count integer NOT NULL,
-                  CC_count integer NOT NULL,
-                  DC_count integer NOT NULL,
-                  DD_count integer NOT NULL,
-                  FF_count integer NOT NULL,
-                  VF_count integer NOT NULL,
                   created_at timestamp NOT NULL,
                   updated_At timestamp NOT NULL
                 )"""

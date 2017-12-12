@@ -161,9 +161,12 @@ class MessageRepository:
     def delete(self, id):
         with get_connection().cursor() as cursor:
             query = """DELETE FROM messages WHERE id = %s"""
-            cursor.execute(query, [id])
-            cursor.close()
-            return True
+            try:
+                cursor.execute(query, [id])
+                get_connection().commit()
+                return True
+            except:
+                return False
 
     @classmethod
     def create(self, message):
