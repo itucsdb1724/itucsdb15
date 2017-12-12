@@ -40,6 +40,8 @@ def search():
 @course.route('/<int:id>/files', methods=['GET', 'POST'])
 def files(id):
     course = CourseRepository.find_by_id(id)
+    if not course:
+        abort(404)
     files = FileRepository.find_files_of_course(course.id)
     form = NewFileForCourseForm()
     if form.validate_on_submit():
@@ -61,6 +63,8 @@ def files(id):
 @course.route('/<int:id>/messages', methods=['GET', 'POST'])
 def threads(id):
     course = CourseRepository.find_by_id(id)
+    if not course:
+        abort(404)
     threads = MessageRepository.find_threads_of_course(course.id)
     form = NewThreadForCourseForm()
     if form.validate_on_submit():
@@ -76,7 +80,13 @@ def threads(id):
 @course.route('/<int:course_id>/messages/<int:id>', methods=['GET', 'POST'])
 def messages(course_id, id):
     course = CourseRepository.find_by_id(course_id)
+    if not course:
+        abort(404)
     thread = MessageRepository.find_by_id(id)
+    if not thread:
+        abort(404)
+    if thread.course_id != course.id:
+        abort(404)
     messages = MessageRepository.find_messages_of_thread(id)
     form = NewMessageForm()
     if form.validate_on_submit():

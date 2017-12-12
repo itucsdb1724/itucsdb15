@@ -20,12 +20,16 @@ section = Blueprint('section', __name__, url_prefix='/section')
 @section.route('/<int:id>', methods=['GET'])
 def index(id):
     section = SectionRepository.find_by_id(id)
+    if not section:
+        abort(404)
     return render_template("section/index.html", section=section)
 
 
 @section.route('/<int:id>/files', methods=['GET', 'POST'])
 def files(id):
     section = SectionRepository.find_by_id(id)
+    if not section:
+        abort(404)
     files = FileRepository.find_files_of_section(section.id)
     form = NewFileForSectionForm()
     if form.validate_on_submit():
@@ -49,6 +53,8 @@ def files(id):
 @section.route('/<int:id>/messages', methods=['GET', 'POST'])
 def threads(id):
     section = SectionRepository.find_by_id(id)
+    if not section:
+        abort(404)
     threads = MessageRepository.find_threads_of_section(section.id)
     form = NewThreadForSectionForm()
     if form.validate_on_submit():
@@ -66,7 +72,13 @@ def threads(id):
 @section.route('/<int:section_id>/messages/<int:id>', methods=['GET', 'POST'])
 def messages(section_id, id):
     section = SectionRepository.find_by_id(section_id)
+    if not section:
+        abort(404)
     thread = MessageRepository.find_by_id(id)
+    if not thread:
+        abort(404)
+    if thread.section_id != section.id:
+        abort(404)
     messages = MessageRepository.find_messages_of_thread(id)
     form = NewMessageForm()
     if form.validate_on_submit():
