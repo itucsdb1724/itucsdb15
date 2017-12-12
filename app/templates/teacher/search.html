@@ -5,9 +5,22 @@
 {% block inner_content %} 
 
 
-
+<h2 class="text-left">Searching Teachers</h2>
+<br><br>
 <div class="row">
 	<div class='col-md-4 col-md-offset-4'>
+     <form action="/teacher/search"> 
+        <label class="col-form-label" for="formGroupExampleInput">Search Other Teachers:</label> 
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for..." name="query">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button ">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </span>
+        </div><!-- /input-group -->
+     </form>
+
     <div id="teacher-search-results">
       <p class="query">search query: <b>{{ query }}</b></p>
           {% if teachers|length > 0 %}
@@ -21,17 +34,7 @@
           {% endif %}
     </div>
 
-      <form action="/teacher/search"> 
-        <label class="col-form-label" for="formGroupExampleInput">Search Other Teachers:</label> 
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for..." name="query">
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="button ">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          </span>
-        </div><!-- /input-group -->
-     </form>
+
 	</div>
 </div>
 
