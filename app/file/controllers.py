@@ -1,11 +1,14 @@
 import os
 
+from functools import reduce
+
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from flask_login import current_user, login_required, logout_user
 
 from flask import current_app as app
 
 from app.file.models import File, FileRepository
+from app.section.models import SectionRepository
 
 file = Blueprint('file', __name__, url_prefix='/files')
 
@@ -35,3 +38,12 @@ def delete(id):
     else:
         return redirect(url_for('course.files', id=current_file.course_id))
 
+@file.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    files = FileRepository.search(query)
+    def map_model_to_dict(x, model):
+        x.update({str(model.id): model})
+        return x
+    sections = reduce(map_model_to_dict, SectionRepository.all(), {})
+    return render_template("file/search.html", query=query, files=files, sections=sections)

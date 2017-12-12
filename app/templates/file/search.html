@@ -1,0 +1,49 @@
+{% extends "main.html" %}
+
+{% block title %}Course Search{% endblock %}
+
+{% block inner_content %}
+
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2 class="text-left">Searching Files</h2>
+    <form action="/files/search">
+       <label class="col-form-label">Search Other Files:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." name="query">
+            <span class="input-group-btn">
+            <button class="btn btn-primary" type="button "><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+          </div><!-- /input-group -->
+    </form>
+    <div style="margin: 10px 0">query: <b>{{query}}</b></div>
+    {% if files|length > 0 %}
+      <div class="list-group">
+        {% for file in files %}
+          {% if file.section_id is not none %}
+            <a href="/section/{{file.section_id}}/files" class="list-group-item"><b>{{file.title}}</b> at {{file.course.title}} ({{sections[file.section_id|string].crn}})</a>
+          {% else %}
+            <a href="/course/{{file.course_id}}/files" class="list-group-item"><b>{{file.title}}</b> at {{file.course.title}}</a>
+          {% endif %}
+
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No files found.</p>
+    {% endif %}
+  </div>
+</div>
+<br>
+
+
+<div id="file-search-results">
+
+</div>
+
+
+
+
+
+
+{% endblock %}

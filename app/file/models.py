@@ -125,6 +125,18 @@ class FileRepository:
             return list(map(parse_database_row, cursor.fetchall()))
 
     @classmethod
+    def search(self, q):
+        with get_connection().cursor() as cursor:
+            query = """SELECT f.id, f.course_id, f.section_id, f.user_id, f.section_only, f.title, f.filename, f.original_filename, f.content_type, f.created_at, f.updated_at,
+                              c.id, c.department_code, c.course_code, c.title, c.created_at, c.updated_At FROM files AS f INNER JOIN courses AS c ON f.course_id = c.id WHERE UPPER(f.title) ILIKE %s"""
+            cursor.execute(query, ['%'+ q.upper() +'%'])
+            def parse_database_row(row):
+                file = File.from_database(row[0:11])
+                file.course = Course.from_database(row[11:17])
+                return file
+            return list(map(parse_database_row, cursor.fetchall()))
+
+    @classmethod
     def update_section_only(self, id, section_only):
         with get_connection().cursor() as cursor:
             query = """UPDATE files SET section_only = %s WHERE id = %s"""

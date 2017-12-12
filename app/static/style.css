@@ -10,6 +10,10 @@
   margin-bottom: 10px;
 }
 
+#home-search .course-find {
+  margin: 20px 0 0 40px;
+}
+
 body {
   padding-bottom: 20px;
 }
@@ -108,4 +112,11 @@ body {
 }
 #header .container-fluid .nav ul.dropdown-menu li a {
   padding: 10px;
+}
+
+#not-found {
+  color: #337ab7;
+  font-size: 80px;
+  padding: 50px;
+  text-align: center;
 }
