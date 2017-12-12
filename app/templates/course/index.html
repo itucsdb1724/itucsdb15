@@ -6,7 +6,7 @@
   <h2>Sections:</h2>
   <div class="list-group">
     {% for section in sections %}
-      <a href="/section/{{ section.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}  - {{ section.crn }}  {{section.building}} {{section.room}} {{ section.time}} {{ section.day }} {{section.get_teacher().name}}</a>
+      <a href="/section/{{ section.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}  - <b> {{ section.crn }} {{section.get_teacher().name}} - {{ section.day}} {{ section.time }} - {{section.building}} {{section.room}} </b></a>
     {% endfor %}
   </div>
 

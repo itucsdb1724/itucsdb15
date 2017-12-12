@@ -31,7 +31,7 @@ def login():
         user = UserRepository.find_by_email(form.email.data)
         if user and user.check_password(form.password.data):
             session['user_id'] = user.session_token
-            flash('Welcome %s' % user.username)
+            flash('Welcome %s' % user.username, 'success')
             return redirect(url_for('home_page'))
         flash('Wrong email or password', 'danger')
     return render_template("user/form.html", form=form, title="Login")
@@ -51,7 +51,7 @@ def register():
         user = UserRepository.create(user)
         if user:
             session['user_id'] = user.session_token
-            flash('Welcome %s' % user.username)
+            flash('Welcome %s' % user.username, 'success')
             return redirect(url_for('home_page'))
         else:
             flash('Something went wrong.', 'danger')

@@ -1,21 +1,111 @@
+#home-header p {
+  font-size: 18px;
+}
+
+#home-search {
+  margin: 70px 0;
+}
+
+#home-search .col-md-4 {
+  margin-bottom: 10px;
+}
+
 body {
-  background-color: white;
-  color: #6F6F6F;
-  font-family: 'Droid Sans', 'Helvetica', 'sans';
-  font-size: 12pt;
-  margin: 2ex 2em;
+  padding-bottom: 20px;
 }
 
-h1, h2, h3, h4 {
-  color: #E9601A;
+.panel-course {
+  color: black;
+  text-align: center;
 }
 
-a {
-  color: #6F6F6F;
-  text-decoration: underline;
+.panel-course .panel-heading {
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px 0;
 }
 
-div#datetime {
-  font-size: 80%;
-  text-align: right;
+.panel-course .panel-body {
+  font-size: 16px;
+  height: 85px;
+  padding-top: 20px;
+}
+
+#course-search-results .panel-course {
+  width: 260px;
+  float: left;
+  margin: 0 20px 20px 0;
+}
+
+.panel-course-link:hover .panel-course .panel-heading {
+  background: #b5b5b5;
+}
+
+
+#header {
+  height: 70px;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  border-bottom: 4px solid #8cadca;
+}
+#header .container-fluid {
+  height: 70px;
+}
+#header .container-fluid .navbar-header {
+  height: 70px;
+}
+#header .container-fluid .navbar-header .navbar-brand {
+  background-color: #337ab7;
+  height: 66px;
+  line-height: 4px;
+  padding: 31px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+}
+#header .container-fluid .navbar-header .navbar-brand img {
+  margin-top: 9px;
+}
+#header .navbar-toggle {
+  margin: 15px;
+}
+#header .navbar-collapse.in {
+  background: white;
+}
+#header .container-fluid .navbar-header .brand {
+  font-size: 26px;
+  color: #5f5f5f;
+  display: inline-block;
+  padding: 15px;
+}
+#header .container-fluid .nav li a {
+  padding: 25px 10px;
+  text-transform: uppercase;
+}
+#header .container-fluid .nav li a:hover {
+  color: #000000;
+}
+#header .container-fluid .nav li a.dropdown-toggle {
+  color: #000000;
+  font-weight: bold;
+}
+#header .container-fluid .nav li a.start-pomodoro {
+  color: #ff6260;
+  font-weight: bold;
+}
+#header .container-fluid .nav li a.black {
+  color: #000000;
+  font-weight: bold;
+}
+#header .container-fluid .nav li a.trello {
+  color: #026aa7;
+  font-weight: bold;
+}
+#header .container-fluid .nav li.open > a, #header .container-fluid .nav li.open > a:focus, #header .container-fluid .nav li.open > a:hover {
+  background: #eeeeee;
+  color: #000000;
+}
+#header .container-fluid .nav ul.dropdown-menu li a {
+  padding: 10px;
 }
