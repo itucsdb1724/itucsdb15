@@ -129,16 +129,19 @@ class FileRepository:
         with get_connection().cursor() as cursor:
             query = """UPDATE files SET section_only = %s WHERE id = %s"""
             cursor.execute(query, [section_only, id])
-            cursor.close()
+            get_connection().commit()
             return True
 
     @classmethod
     def delete(self, id):
         with get_connection().cursor() as cursor:
-            query = """DELETE FROM files  WHERE id = %s"""
-            cursor.execute(query, [id])
-            cursor.close()
-            return True
+            query = """DELETE FROM files WHERE id = %s"""
+            try:
+                cursor.execute(query, [id])
+                get_connection().commit()
+                return True
+            except:
+                return False
 
     @classmethod
     def create(self, file):

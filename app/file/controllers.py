@@ -27,8 +27,8 @@ def trigger_section_only(id):
 def delete(id):
     current_file = FileRepository.find_by_id(id)
     if current_file.user_id == current_user.id:
-        FileRepository.delete(current_file.id)
-        os.remove(os.path.join(app.config['UPLOAD_DIR'], 'files', current_file.filename))
+        if FileRepository.delete(current_file.id):
+            os.remove(os.path.join(app.config['UPLOAD_DIR'], 'files', current_file.filename))
 
     if request.args.get('from') == 'section':
         return redirect(url_for('section.files', id=current_file.section_id))
