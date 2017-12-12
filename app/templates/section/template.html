@@ -17,7 +17,7 @@
 
   <div class="row">
     <div class="col-md-3">
-      <h3>{{section.get_course().title}} <small>{{section.get_course().department_code}}{{section.get_course().course_code}}</small> </h3>
+      <h3> <a href="/course/{{section.course_id}}">{{section.get_course().title}}</a> <small>{{section.get_course().department_code}}{{section.get_course().course_code}}</small> </h3>
       <h2></h2>
       <h4>{{section.crn}}</h4>
       <h4><a href="/teacher/{{ section.get_teacher().id }}">{{section.get_teacher().name}}</a></h4>
