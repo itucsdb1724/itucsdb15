@@ -16,20 +16,20 @@
     {% if messages|length > 0 %}
       <div class="list-group">
         {% for message in messages %}
-          {% if message.section_id %}
-            {% if message.thread_id %}
-            <a href="/section/{{message.section_id}}/messages/{{ message.thread_id }}" class="list-group-item">{{message.title}} at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
+          {% if message.section_id is not none %}
+            {% if message.thread_id is not none %}
+            <a href="/section/{{message.section_id}}/messages/{{ message.thread_id }}" class="list-group-item"><b>{{message.title}}</b> at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
               {% else %}
-            <a href="/section/{{message.section_id}}/messages/{{ message.id }}" class="list-group-item">{{message.title}} at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
+            <a href="/section/{{message.section_id}}/messages/{{ message.id }}" class="list-group-item"><b>{{message.title}}</b> at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
             {% endif %}
           {% else %}
-            {% if message.thread_id %}
-              <a href="/course/{{message.course_id}}/messages/{{ message.thread_id }}" class="list-group-item">{{message.title}} at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
+            {% if message.thread_id is not none %}
+              <a href="/course/{{message.course_id}}/messages/{{ message.thread_id }}" class="list-group-item"><b>{{message.title}}</b> at {{message.course.title}}</a>
               {% else %}
-              <a href="/course/{{message.course_id}}/messages/{{ message.id }}" class="list-group-item">{{message.title}} at {{message.course.title}} ({{sections[message.section_id|string].crn}})</a>
+              <a href="/course/{{message.course_id}}/messages/{{ message.id }}" class="list-group-item"><b>{{message.title}}</b> at {{message.course.title}}</a>
             {% endif %}
           {% endif %}
-         
+
         {% endfor %}
       </div>
     {% else %}
@@ -41,12 +41,12 @@
     {% if files|length > 0 %}
       <div class="list-group">
         {% for file in files %}
-          {% if file.section_id %}
-            <a href="/section/{{file.section_id}}/files" class="list-group-item">{{file.title}} at {{file.course.title}} ({{sections[file.section_id|string].crn}})</a>
+          {% if file.section_id is not none %}
+            <a href="/section/{{file.section_id}}/files" class="list-group-item"><b>{{file.title}}</b> at {{file.course.title}} ({{sections[file.section_id|string].crn}})</a>
           {% else %}
-            <a href="/course/{{file.course_id}}/files" class="list-group-item">{{file.title}} at {{file.course.title}}</a>
+            <a href="/course/{{file.course_id}}/files" class="list-group-item"><b>{{file.title}}</b> at {{file.course.title}}</a>
           {% endif %}
-         
+
         {% endfor %}
       </div>
     {% else %}
@@ -55,39 +55,4 @@
   </div>
 </div>
 
-
-
-
-  <!-- <div class="row">
-    <div class="col-md-12 text-center">
-      <h1 class="">{{user.username}} <small>{{user.email}}</small></h1>
-      <p>member since {{ user.created_at.strftime('%d %B %Y') }}</p>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <h3>Latest Messages</h3>
-        {% if messages|length > 0 %}
-          <div class="list-group">
-            {% for message in messages %}
-              <a href="/message/{{ message.id }}" class="list-group-item">{{message.id}}</a>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p>No message yet.</p>
-        {% endif %}
-      </div>
-      <div class="col-md-6">
-        <h3>Latest Files</h3>
-        {% if files|length > 0 %}
-          <div class="list-group">
-            {% for file in files %}
-              <a href="/file/{{ file.id }}" class="list-group-item">{{file.id}}</a>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p>No file yet.</p>
-        {% endif %}
-      </div>
-    </div>
-  </div> -->
 {% endblock %}

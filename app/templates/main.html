@@ -1,8 +1,14 @@
 {% extends "bootstrap/base.html" %}
 {% block title %} Palmyra {% endblock %}
 
+{% block styles %}
+  {{super()}}
+  <link href="/static/style.css#{{ range(100000, 999999) | random }}" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,300italic,600italic,400italic' rel='stylesheet' type='text/css'>
+{% endblock styles %}
+
 {% block navbar %}
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" id="header">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
