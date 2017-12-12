@@ -60,7 +60,8 @@ class UserRepository:
                 return None
             return User.from_database(data)
 
-    def find_by_email(email):
+    @classmethod
+    def find_by_email(self, email):
         with get_connection().cursor() as cursor:
             query = """SELECT * FROM users WHERE email = %s LIMIT 1"""
             cursor.execute(query, [email])
@@ -69,7 +70,8 @@ class UserRepository:
                 return None
             return User.from_database(data)
 
-    def find_by_session_token(session_token):
+    @classmethod
+    def find_by_session_token(self, session_token):
         with get_connection().cursor() as cursor:
             query = """SELECT * FROM users WHERE session_token = %s LIMIT 1"""
             cursor.execute(query, [session_token])
