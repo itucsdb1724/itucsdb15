@@ -3,14 +3,15 @@ import json
 import os
 import psycopg2 as dbapi2
 import re
+from lxml import html
+import requests
 
-from flask import Flask
-from flask import redirect
-from flask import render_template
+from flask import Flask, redirect, render_template, g
 from flask.helpers import url_for
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, login_required
 
+from app.connection import get_connection
 
 from app.user.controllers import user as user_module
 from app.teacher.controllers import teacher as teacher_module
@@ -56,9 +57,7 @@ def home_page():
 
 @app.route('/initdb')
 def initialize_database():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-
+    with get_connection().cursor() as cursor:
         query = """DROP TABLE IF EXISTS users CASCADE"""
         cursor.execute(query)
 
@@ -175,91 +174,102 @@ def initialize_database():
                 )"""
         cursor.execute(query)
 
-        connection.commit()
+        get_connection().commit()
+    return redirect(url_for('home_page'))
+
+@app.route('/parse_itu')
+def parse_itu():
+    page = requests.get('http://www.sis.itu.edu.tr/tr/ders_programlari/LSprogramlar/prg.php')
+    tree = html.fromstring(page.content)
+
+    #This will create a list of course_codes
+    course_codes = tree.xpath('//select[@name="bolum"]/option[not(@selected)]/text()')
+
+    # print 'Course Codes: '
+    for course_code in course_codes:
+        link = 'http://www.sis.itu.edu.tr/tr/ders_programlari/LSprogramlar/prg.php?fb=' + course_code
+        page = requests.get(link.strip())
+        tree = html.fromstring(page.content)
+        tds = tree.xpath('//table[@class="dersprg"]/tr[@onmouseover]/td')
+        courses = []
+        while len(tds) > 14:
+            pice = tds[:14]
+            courses.append(pice)
+            tds   = tds[14:]
+        courses.append(tds)
+
+        if len(courses[0]) == 0:
+            continue
+
+        sections = []
+        for course in courses:
+            course_sections = [{}]
+            course_sections[0]['crn'] = course[0].text
+            course_sections[0]['course_code'] = course[1].getchildren()[0].text
+            course_sections[0]['title'] = course[2].text
+            course_sections[0]['instructor'] = course[3].text
+            course_sections[0]['capacity'] = course[8].text
+            course_sections[0]['enrolled'] = course[9].text
 
 
-    teacher1 = TeacherRepository.create(Teacher("Feanor"))
-    teacher2 = TeacherRepository.create(Teacher("Hayri"))
-    teacher3 = TeacherRepository.create(Teacher("Turgut"))
-    teacher4 = TeacherRepository.create(Teacher("Uyar"))
-    teacher5 = TeacherRepository.create(Teacher("Ahmet"))
-    teacher6 = TeacherRepository.create(Teacher("Sabih"))
-    teacher7 = TeacherRepository.create(Teacher("Atadan"))
-    course1 = CourseRepository.create(Course("BLG", "313", "Giris"))
-    course2 = CourseRepository.create(Course("BLG", "312", "Cikis"))
-    course3 = CourseRepository.create(Course("TAR", "314", "Basl"))
-    course4 = CourseRepository.create(Course("SAN", "315", "Hell"))
-    course5 = CourseRepository.create(Course("ALT", "316", "Silmaril"))
-    course6 = CourseRepository.create(Course("SIL", "317", "Mellon"))
-    course7 = CourseRepository.create(Course("TRF", "318", "Ungolianth"))
-
-    section = Section()
-    section.crn = 31228
-    section.building = "EEB"
-    section.day = "monday"
-    section.time = "morning"
-    section.room = "d212"
-    section.capacity = 21
-    section.enrolled = 12
+            buildings = course[4].text_content()
+            days = list(filter(None, course[5].text_content().split(' ')))
+            hours = list(filter(None, course[6].text_content().split(' ')))
 
 
-    section.crn = 12373
-    section.course_id =course1.id
-    section.teacher_id = teacher1.id
-    SectionRepository.create(section)
+            if len(course[7].text_content().strip()) == 0:
+                classes_content = "---"
+            else:
+                classes_content = course[7].text_content()
 
-    section.crn = 67537
-    section.course_id =course1.id
-    section.teacher_id = teacher2.id
-    SectionRepository.create(section)
+            classes = list(filter(None, classes_content.split(' ')))
 
-    section.crn = 23675
-    section.course_id =course2.id
-    section.teacher_id = teacher3.id
-    SectionRepository.create(section)
+            sections_count = len(buildings) // 3
 
-    section.crn = 82847
-    section.course_id =course3.id
-    section.teacher_id = teacher4.id
-    SectionRepository.create(section)
+            for x in range(0,sections_count):
+                if x >= len(course_sections):
+                    course_sections.append(course_sections[x-1].copy())
+                course_section = course_sections[x]
+                course_section['building'] = buildings[(x * 3): ((x + 1) * 3)]
+                course_section['day'] = days[x]
+                course_section['hour'] = hours[x]
+                course_section['class'] = classes[x]
 
-    section.crn = 72639
-    section.course_id =course3.id
-    section.teacher_id = teacher1.id
-    SectionRepository.create(section)
+            for data in course_sections:
+                course_codes = data['course_code'].split(' ')
 
-    section.crn = 23379
-    section.course_id =course4.id
-    section.teacher_id = teacher5.id
-    SectionRepository.create(section)
+                course = CourseRepository.find_by_department_and_course_code(course_codes[0], course_codes[1])
+                if not course:
+                    course = CourseRepository.create(Course(course_codes[0], course_codes[1], data['title']))
 
-    section.crn = 97357
-    section.course_id =course6.id
-    section.teacher_id = teacher7.id
-    SectionRepository.create(section)
+                instructor = data['instructor'].split(',')[0]
+                teacher = TeacherRepository.find_by_name(instructor)
+                if not teacher:
+                    teacher = TeacherRepository.create(Teacher(instructor))
 
-    section.crn = 22134
-    section.course_id =course7.id
-    section.teacher_id = teacher3.id
-    SectionRepository.create(section)
-
-    section.crn = 23380
-    section.course_id =course2.id
-    section.teacher_id = teacher7.id
-    SectionRepository.create(section)
-
-    section.crn = 97761
-    section.course_id =course6.id
-    section.teacher_id = teacher2.id
-    SectionRepository.create(section)
+                section = Section()
+                section.crn = int(data['crn'])
+                section.building = data['building']
+                section.day = data['day']
+                section.time = data['hour']
+                section.room = data['class']
+                section.capacity = data['capacity']
+                section.enrolled = data['enrolled']
+                section.course_id = course.id
+                section.teacher_id = teacher.id
+                SectionRepository.create(section)
 
     return redirect(url_for('home_page'))
 
 
-# Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
+@app.teardown_appcontext
+def close_connection(error):
+    if hasattr(g, 'connection'):
+        g.connection.close()
 
 app.register_blueprint(user_module)
 app.register_blueprint(teacher_module)

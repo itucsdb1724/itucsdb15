@@ -13,7 +13,6 @@
           <th>File Name</th>
           <th>Content Type</th>
           <th>From</th>
-          <th>Section Only</th>
           <th></th>
         </tr>
       </thead>
@@ -25,15 +24,9 @@
               <td>{{file.content_type}}</td>
               <td>{{file.user.username}}</td>
               <td>
-                {{file.section_only}}
-                {% if current_user.is_authenticated and file.user_id == current_user.id %}
-                  <a href="/files/{{file.id}}/trigger_section_only?from=section" class="btn btn-xs">Change</a>
-                {% endif %}
-              </td>
-              <td>
                 <a href="/static/uploads/files/{{file.filename}}" class="btn btn-xs" target="_blank"><span class="glyphicon glyphicon-download"></span></a>
                 {% if current_user.is_authenticated and file.user_id == current_user.id %}
-                  <a href="/files/{{file.id}}/delete?from=section" class="btn btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                  <a href="/files/{{file.id}}/delete?from=course" class="btn btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                 {% endif %}
               </td>
             </tr>

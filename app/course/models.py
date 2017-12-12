@@ -2,7 +2,7 @@ import datetime
 import psycopg2 as dbapi2
 
 from flask import current_app as app
-
+from app.connection import get_connection
 
 class Course():
     # id serial PRIMARY KEY
@@ -37,8 +37,7 @@ class CourseRepository:
 
     @classmethod
     def find_by_id(self, id):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM courses WHERE id = %s LIMIT 1"""
             cursor.execute(query, [id])
             data = cursor.fetchone()
@@ -48,8 +47,7 @@ class CourseRepository:
 
     @classmethod
     def find_by_department_and_course_code(self, department_code, course_code):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM courses WHERE department_code = %s AND course_code = %s LIMIT 1"""
             cursor.execute(query, [department_code, course_code])
             data = cursor.fetchone()
@@ -60,13 +58,12 @@ class CourseRepository:
 
     @classmethod
     def find_recents(self, limit = 0):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             if limit > 0:
-                query = """SELECT * FROM courses ORDER BY updated_at LIMIT %s"""
+                query = """SELECT * FROM courses ORDER BY updated_at DESC LIMIT %s"""
                 cursor.execute(query, [limit])
             else:
-                query = """SELECT * FROM courses ORDER BY updated_at"""
+                query = """SELECT * FROM courses ORDER BY updated_at DESC"""
                 cursor.execute(query)
             data = cursor.fetchall()
             def parse_database_row(row): return Course.from_database(row)
@@ -74,8 +71,7 @@ class CourseRepository:
 
     @classmethod
     def search(self, q):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             query = """SELECT * FROM courses WHERE UPPER(title) ILIKE %s"""
             cursor.execute(query, ['%'+ q.upper() +'%'])
             data = cursor.fetchall()
@@ -85,22 +81,20 @@ class CourseRepository:
 
     @classmethod
     def find_department_codes(self):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            with connection.cursor() as cursor:
-                query = """SELECT DISTINCT(department_code) FROM courses"""
-                cursor.execute(query)
-                return cursor.fetchall()
+        with get_connection().cursor() as cursor:
+            query = """SELECT DISTINCT(department_code) FROM courses"""
+            cursor.execute(query)
+            return cursor.fetchall()
 
 
     @classmethod
     def create(self, course):
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
+        with get_connection().cursor() as cursor:
             now = datetime.datetime.now()
             query = """INSERT INTO courses (department_code, course_code, title, created_at, updated_at)
                             VALUES (%s, %s, %s, %s, %s)
                             RETURNING id, department_code, course_code, title, created_at, updated_at"""
             cursor.execute(query, (course.department_code, course.course_code, course.title, course.created_at, course.updated_at))
-            connection.commit()
+            get_connection().commit()
             course = Course.from_database(cursor.fetchone())
             return course

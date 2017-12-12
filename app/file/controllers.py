@@ -19,7 +19,7 @@ def trigger_section_only(id):
     if request.args.get('from') == 'section':
         return redirect(url_for('section.files', id=current_file.section_id))
     else:
-        return redirect(url_for('home_page'))
+        return redirect(url_for('course.files', id=current_file.course_id))
 
 
 @file.route('/<int:id>/delete', methods=['GET'])
@@ -33,5 +33,5 @@ def delete(id):
     if request.args.get('from') == 'section':
         return redirect(url_for('section.files', id=current_file.section_id))
     else:
-        return redirect(url_for('home_page'))
+        return redirect(url_for('course.files', id=current_file.course_id))
 

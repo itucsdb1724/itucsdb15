@@ -13,7 +13,6 @@
           <th>Title</th>
           <th>Message</th>
           <th>Total Messages</th>
-          <th>Section Only</th>
           <th></th>
         </tr>
       </thead>
@@ -24,12 +23,6 @@
               <td>{{thread.title}}</td>
               <td>{{thread.message}}</td>
               <td>{{thread.message_count()}}</td>
-              <td>
-                {{thread.section_only}}
-                {% if current_user.is_authenticated and thread.user_id == current_user.id %}
-                  <a href="/messages/{{thread.id}}/trigger_section_only?from=course" class="btn btn-xs">Change</a>
-                {% endif %}
-              </td>
               <td>
                 <a href="/course/{{course.id}}/messages/{{thread.id}}" class="btn btn-xs"><span class="glyphicon glyphicon-arrow-right"></span></a>
               </td>
