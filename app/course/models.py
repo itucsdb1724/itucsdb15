@@ -57,17 +57,19 @@ class CourseRepository:
 
 
     @classmethod
-    def find_recents(self, limit = 0):
+    def find_random(self, limit = 0):
         with get_connection().cursor() as cursor:
             if limit > 0:
-                query = """SELECT * FROM courses ORDER BY updated_at DESC LIMIT %s"""
+                query = """SELECT * FROM courses ORDER BY course_code DESC OFFSET random() * (SELECT count(*) FROM courses) LIMIT %s"""
                 cursor.execute(query, [limit])
             else:
-                query = """SELECT * FROM courses ORDER BY updated_at DESC"""
+                query = """SELECT * FROM courses ORDER BY course_code DESC OFFSET random() * (SELECT count(*) FROM courses)"""
                 cursor.execute(query)
             data = cursor.fetchall()
             def parse_database_row(row): return Course.from_database(row)
             return list(map(parse_database_row, data))
+
+    
 
     @classmethod
     def search(self, q):

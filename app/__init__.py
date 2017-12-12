@@ -47,9 +47,9 @@ def load_user(session_token):
 
 @app.route('/')
 def home_page():
-    courses = CourseRepository.find_recents(5)
-    sections = SectionRepository.find_recents(5)
-    teachers = TeacherRepository.find_recents(5)
+    courses = CourseRepository.find_random(10)
+    sections = SectionRepository.find_random(10)
+    teachers = TeacherRepository.find_random(10)
     department_codes = CourseRepository.find_department_codes()
     return render_template('home.html', sections=sections, courses=courses, teachers=teachers, department_codes=department_codes)
 

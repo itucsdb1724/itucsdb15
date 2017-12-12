@@ -51,6 +51,19 @@ class TeacherRepository:
 
 
     @classmethod
+    def find_random(self, limit = 0):
+        with get_connection().cursor() as cursor:
+            if limit > 0:
+                query = """SELECT * FROM teachers OFFSET random() * (SELECT count(*) FROM teachers) LIMIT %s"""
+                cursor.execute(query, [limit])
+            else:
+                query = """SELECT * FROM teachers OFFSET random() * (SELECT count(*) FROM teachers)"""
+                cursor.execute(query)
+            data = cursor.fetchall()
+            def parse_database_row(row): return Teacher.from_database(row)
+            return list(map(parse_database_row, data))
+
+    @classmethod
     def find_recents(self, limit = 0):
         with get_connection().cursor() as cursor:
             if limit > 0:

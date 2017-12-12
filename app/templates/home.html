@@ -55,7 +55,7 @@
 
   <div class="row" id="homepage-datas">
     <div class="col-md-4">
-      <h3>Latest Sections</h3>
+      <h3>Random Sections</h3>
       <div class="list-group">
         {% for section in sections %}
           <a href="/section/{{ section.id }}" class="list-group-item">{{ section.get_course().department_code }}{{ section.get_course().course_code }} {{ section.get_course().title }}  - {{ section.crn }}</a>
@@ -63,7 +63,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <h3>Latest Courses</h3>
+      <h3>Random Courses</h3>
       <div class="list-group">
         {% for course in courses %}
           <a href="/course/{{ course.id }}" class="list-group-item">{{ course.department_code }}{{ course.course_code }} {{ course.title }}</a>
@@ -71,7 +71,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <h3>Latest Teachers</h3>
+      <h3>Random Teachers</h3>
       <div class="list-group">
         {% for teacher in teachers %}
           <a href="/teacher/{{ teacher.id }}" class="list-group-item">{{ teacher.name }}</a>

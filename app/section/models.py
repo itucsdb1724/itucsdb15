@@ -93,13 +93,13 @@ class SectionRepository:
 
 
     @classmethod
-    def find_recents(self, limit = 0):
+    def find_random(self, limit = 0):
         with get_connection().cursor() as cursor:
             if limit > 0:
-                query = """SELECT * FROM sections ORDER BY updated_at DESC LIMIT %s"""
+                query = """SELECT * FROM sections ORDER BY capacity DESC OFFSET random() * (SELECT count(*) FROM sections) LIMIT %s"""
                 cursor.execute(query, [limit])
             else:
-                query = """SELECT * FROM sections ORDER BY updated_at DESC"""
+                query = """SELECT * FROM sections ORDER BY capacity DESC OFFSET random() * (SELECT count(*) FROM sections)"""
                 cursor.execute(query)
             data = cursor.fetchall()
             def parse_database_row(row): return Section.from_database(row)
