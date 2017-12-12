@@ -42,6 +42,8 @@
     <h3>Add New File</h3>
     {{ wtf.quick_form(form) }}
   </div>
+  {% else %}
+    <div>You should login to upload a file.</div>
   {% endif %}
 
 {% endblock %}

@@ -27,6 +27,8 @@
       <h3>Add New Message</h3>
       {{ wtf.quick_form(form) }}
     </div>
+  {% else %}
+    <div>You should login to send a message.</div>
   {% endif %}
 
 {% endblock %}
