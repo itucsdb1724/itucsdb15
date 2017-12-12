@@ -8,6 +8,15 @@
 {% endblock styles %}
 
 {% block navbar %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible" role="alert" style="margin-bottom: 0;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <nav class="navbar navbar-default" id="header">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -40,17 +49,6 @@
 {% endblock %}
 
 {% block content %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <!-- <strong>Title</strong> --> {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
   <div class="container">
     {% block inner_content %}{% endblock %}
   </div>
